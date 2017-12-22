@@ -3,7 +3,7 @@
 # start script
 CWD=`/usr/bin/dirname $0`
 cd $CWD
-. ./s3-functions.sh
+. ./functions.sh
 
 # check parameters
 if [ "x${S3_TARGET_BUCKET_URL}" == "x" ]; then

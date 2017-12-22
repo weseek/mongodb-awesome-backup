@@ -11,7 +11,7 @@ DELETE_TARGET_DAYS_LEFT=${DELETE_TARGET_DAYS_LEFT:-4}
 CWD=`/usr/bin/dirname $0`
 cd $CWD
 
-. ./s3-functions.sh
+. ./functions.sh
 PAST=`create_past_yyyymmdd ${DELETE_TARGET_DAYS_LEFT}`
 
 # check the existence of past file

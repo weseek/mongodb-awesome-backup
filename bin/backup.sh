@@ -14,7 +14,7 @@ MONGODB_HOST=${MONGODB_HOST:-mongo}
 CWD=`/usr/bin/dirname $0`
 cd $CWD
 
-. ./s3-functions.sh
+. ./functions.sh
 TODAY=`create_today_yyyymmdd`
 
 echo "=== $0 started at `/bin/date "+%Y/%m/%d %H:%M:%S"` ==="
