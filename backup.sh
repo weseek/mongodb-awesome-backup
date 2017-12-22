@@ -10,16 +10,12 @@ MONGODB_HOST=${MONGODB_HOST:-mongo}
 #MONGODUMP_OPTS=
 #S3_TARGET_BUCKET_URL=s3://...
 
-DELETE_DEVIDE=${DELETE_DEVIDE:-3}
-DELETE_TARGET_DAYS_LEFT=${DELETE_TARGET_DAYS_LEFT:-4}
-
 # start script
 CWD=`/usr/bin/dirname $0`
 cd $CWD
 
 . ./s3-functions.sh
 TODAY=`create_today_yyyymmdd`
-PAST=`create_past_yyyymmdd ${DELETE_TARGET_DAYS_LEFT}`
 
 echo "=== $0 started at `/bin/date "+%Y/%m/%d %H:%M:%S"` ==="
 
@@ -62,8 +58,3 @@ s3_put_file ${TARBALL_FULLPATH} ${S3_TARGET_BUCKET_URL}
 
 # delete tarball if upload was successfully over
 delete_localfile_if_exists_on_s3 ${TARBALL} ${TMPDIR} ${S3_TARGET_BUCKET_URL}
-
-# check the existence of past file 
-# if it exists, delete it
-TARBALL_PAST="${BASENAME}-${PAST}.tar.bz2"
-s3_delete_file_if_delete_backup_day ${S3_TARGET_BUCKET_URL}/${TARBALL_PAST} ${DELETE_TARGET_DAYS_LEFT} ${DELETE_DEVIDE}
