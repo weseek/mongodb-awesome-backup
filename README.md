@@ -8,7 +8,7 @@ Requirements
 ------------
 
 * Amazon IAM Access Key ID/Secret Access Key
-  * which can access to Amazon S3 buckets
+  * which must have the access lights of the target Amazon S3 bucket.
 
 Usage
 -----
