@@ -11,7 +11,7 @@ RUN pip install awscli
 
 ENV AWS_DEFAULT_REGION=ap-northeast-1
 
-COPY . /opt/bin
+COPY bin /opt/bin
 WORKDIR /opt/bin
 ENTRYPOINT ["/opt/bin/entrypoint.sh"]
 CMD ["backup", "prune", "list"]
