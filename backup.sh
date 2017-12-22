@@ -67,9 +67,3 @@ delete_localfile_if_exists_on_s3 ${TARBALL} ${TMPDIR} ${S3_TARGET_BUCKET_URL}
 # if it exists, delete it
 TARBALL_PAST="${BASENAME}-${PAST}.tar.bz2"
 s3_delete_file_if_delete_backup_day ${S3_TARGET_BUCKET_URL}/${TARBALL_PAST} ${DELETE_TARGET_DAYS_LEFT} ${DELETE_DEVIDE}
-
-
-# output final file list
-echo 1>&2
-echo "There are files below in S3 bucket:" 1>&2
-s3_list_files ${S3_TARGET_BUCKET_URL} 1>&2
