@@ -8,7 +8,7 @@ MONGODB_HOST=${MONGODB_HOST:-mongo}
 #MONGODB_PASSWORD=
 #MONGODB_AUTHDB=
 #MONGODUMP_OPTS=
-#S3_TARGET_BUCKET_URL=s3://...
+#S3_TARGET_BUCKET_URL=s3://... (must be ended with /)
 
 # start script
 CWD=`/usr/bin/dirname $0`
@@ -54,7 +54,8 @@ mongodump -h ${MONGODB_HOST} -o ${TARGET} ${MONGODUMP_OPTS}
 echo "backup ${TARGET}..."
 time ${TAR_CMD} ${TAR_OPTS} ${TARBALL_FULLPATH} -C ${DIRNAME} ${BASENAME}
 # transfer tarball to Amazon S3
-s3_put_file ${TARBALL_FULLPATH} ${S3_TARGET_BUCKET_URL}
+s3_put_file ${TARBALL_FULLPATH} ${S3_TARGET_BUCKET_URL}${TARBALL}
 
 # delete tarball if upload was successfully over
-delete_localfile_if_exists_on_s3 ${TARBALL} ${TMPDIR} ${S3_TARGET_BUCKET_URL}
+# On Docker containers, this operation is unnecessary.
+#delete_localfile_if_exists_on_s3 ${TARBALL} ${TMPDIR} ${S3_TARGET_BUCKET_URL}
