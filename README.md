@@ -19,6 +19,7 @@ docker run --rm \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
   -e S3_TARGET_BUCKET_URL=<Target S3 Bucket URL (s3://...)> \
   [ -e BACKUP_FILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
+  [ -e BACKUPEDDAY=<Day which file is backuped specified in format yyyymmdd (default: <TODAY>) \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
   [ -e MONGODB_USERNAME=<DB login username> \ ]
