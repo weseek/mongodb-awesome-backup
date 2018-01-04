@@ -1,9 +1,8 @@
 # default settings
 AWSCLI="/usr/bin/aws"
-AWSCLI_PUT_OPT="s3 cp"
+AWSCLI_COPY_OPT="s3 cp"
 AWSCLI_LIST_OPT="s3 ls"
 AWSCLI_DEL_OPT="s3 rm"
-AWSCLI_PULL_OPT="s3 cp"
 
 DATE_CMD="/bin/date"
 
@@ -29,20 +28,18 @@ s3_delete_file() {
 	${AWSCLI} ${AWSCLI_DEL_OPT} $1
 }
 
-# Put the specified file.
+# Copy the specified file.
 # arguments: 1. local filename
 #            2. target s3 url (s3://...)
-s3_put_file() {
-	if [ $# -ne 2 ]; then return 255; fi
-	${AWSCLI} ${AWSCLI_PUT_OPT} $1 $2
-}
-
-# Push the specified file.
-# arguments: 1. target s3 url (s3://...)
+#                  or
+#            1. target s3 url (s3://...)
 #            2. local filename
-s3_pull_file() {
+#                  or
+#            1. source s3 url (s3://...)
+#            2. target s3 url (s3://...)
+s3_copy_file() {
 	if [ $# -ne 2 ]; then return 255; fi
-	${AWSCLI} ${AWSCLI_PULL_OPT} $1 $2
+	${AWSCLI} ${AWSCLI_COPY_OPT} $1 $2
 }
 
 # Delete the local file, if it is uploaded on S3
