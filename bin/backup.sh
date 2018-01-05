@@ -56,6 +56,3 @@ time ${TAR_CMD} ${TAR_OPTS} ${TARBALL_FULLPATH} -C ${DIRNAME} ${BASENAME}
 # transfer tarball to Amazon S3
 s3_copy_file ${TARBALL_FULLPATH} ${S3_TARGET_BUCKET_URL}${TARBALL}
 
-# delete tarball if upload was successfully over
-# On Docker containers, this operation is unnecessary.
-#delete_localfile_if_exists_on_s3 ${TARBALL} ${TMPDIR} ${S3_TARGET_BUCKET_URL}

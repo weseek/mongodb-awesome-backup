@@ -29,9 +29,9 @@ docker run --rm \
 
 and after running this, `backup-YYYYMMdd.tar.bz2` will be placed on Target S3 Bucket.
 
-# How to restore
+### How to restore
 
-You can use restore command to restore database from backup file.
+You can use "**restore**" command to restore database from backup file.
 
 ```bash
 docker run --rm \

@@ -60,8 +60,3 @@ if [ "x${MONGODB_AUTHDB}" != "x" ]; then
 fi
 echo "restore MongoDB..."
 mongorestore -h ${MONGODB_HOST} -v ${TARGET} ${MONGORESTORE_OPTS}
-
-# delete tarball if restore was successfully over
-if [ -d ${TMPDIR}/${TARGET_DIRNAME} ]; then
-  rm -rf ${TMPDIR}/${TARGET_DIRNAME}
-fi

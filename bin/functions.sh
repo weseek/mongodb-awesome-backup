@@ -42,22 +42,6 @@ s3_copy_file() {
 	${AWSCLI} ${AWSCLI_COPY_OPT} $1 $2
 }
 
-# Delete the local file, if it is uploaded on S3
-# arguments: 1. file name
-#            2. directory name
-#            3. s3 url where the file placed(s3://...)
-delete_localfile_if_exists_on_s3() {
-	if [ $# -ne 3 ]; then return 255; fi
-	TARBALL=$1
-	TARBALL_FULLPATH="$2/$1"
-	if s3_exists $3/$1; then
-		rm -f ${TARBALL_FULLPATH}
-		echo "DELETED temporary tarball: ${TARBALL}"
-	else
-		echo "not deleted temporary tarball: ${TARBALL} (upload was unsuccessful)"
-	fi
-}
-
 # Create today's date string(YYYYmmdd)
 create_today_yyyymmdd() {
 	create_past_yyyymmdd 0
