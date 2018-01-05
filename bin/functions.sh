@@ -1,6 +1,6 @@
 # default settings
 AWSCLI="/usr/bin/aws"
-AWSCLI_PUT_OPT="s3 cp"
+AWSCLI_COPY_OPT="s3 cp"
 AWSCLI_LIST_OPT="s3 ls"
 AWSCLI_DEL_OPT="s3 rm"
 
@@ -28,28 +28,18 @@ s3_delete_file() {
 	${AWSCLI} ${AWSCLI_DEL_OPT} $1
 }
 
-# Put the specified file.
+# Copy the specified file.
 # arguments: 1. local filename
 #            2. target s3 url (s3://...)
-s3_put_file() {
+#                  or
+#            1. target s3 url (s3://...)
+#            2. local filename
+#                  or
+#            1. source s3 url (s3://...)
+#            2. target s3 url (s3://...)
+s3_copy_file() {
 	if [ $# -ne 2 ]; then return 255; fi
-	${AWSCLI} ${AWSCLI_PUT_OPT} $1 $2
-}
-
-# Delete the local file, if it is uploaded on S3
-# arguments: 1. file name
-#            2. directory name
-#            3. s3 url where the file placed(s3://...)
-delete_localfile_if_exists_on_s3() {
-	if [ $# -ne 3 ]; then return 255; fi
-	TARBALL=$1
-	TARBALL_FULLPATH="$2/$1"
-	if s3_exists $3/$1; then
-		rm -f ${TARBALL_FULLPATH}
-		echo "DELETED temporary tarball: ${TARBALL}"
-	else
-		echo "not deleted temporary tarball: ${TARBALL} (upload was unsuccessful)"
-	fi
+	${AWSCLI} ${AWSCLI_COPY_OPT} $1 $2
 }
 
 # Create today's date string(YYYYmmdd)
