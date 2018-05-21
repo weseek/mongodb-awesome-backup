@@ -1,9 +1,12 @@
 #!/bin/bash -e
 
 # start script
-CWD=`/usr/bin/dirname $0`
-cd $CWD
+CRONMODE=${CRONMODE:-false}
+if $CRONMODE ; then
+  echo "=== started in cron mode `/bin/date "+%Y/%m/%d %H:%M:%S"` ==="
+  crontab -l
+  exec crond -f -d 8
+else
+  exec command_exec.sh $@
+fi
 
-for arg in $@; do
-  ./${arg}.sh
-done
