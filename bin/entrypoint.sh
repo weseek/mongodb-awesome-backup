@@ -7,10 +7,6 @@ if $CRONMODE ; then
   crontab -l
   exec crond -f -d 8
 else
-  CWD=`/usr/bin/dirname $0`
-  cd $CWD
-  
-  for arg in $@; do
-    ./${arg}.sh
-  done
+  exec command_exec.sh $@
 fi
+

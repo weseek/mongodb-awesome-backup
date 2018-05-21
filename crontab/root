@@ -4,5 +4,5 @@
 # |  |  |  month of the year (1-12),
 # |  |  |  |  day of the week (0-6 with 0=Sunday).
 # |  |  |  |  |  commands
-  0  4  *  *  * /opt/bin/backup.sh && /opt/bin/prune.sh && /opt/bin/list.sh
+  0  4  *  *  * /opt/bin/command_exec.sh backup prune list
 
