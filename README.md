@@ -18,7 +18,7 @@ docker run --rm \
   -e AWS_ACCESS_KEY_ID=<Your IAM Access Key ID> \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
   -e S3_TARGET_BUCKET_URL=<Target S3 Bucket URL (s3://...)> \
-  [ -e BACKUP_FILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
+  [ -e BACKUPFILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
   [ -e MONGODB_USERNAME=<DB login username> \ ]
@@ -43,7 +43,7 @@ docker run --rm \
   -e S3_TARGET_BUCKET_URL=<Target S3 Bucket URL (s3://...)> \
   -e CRONMODE=true \
   -v $PWD/crontab/root:/var/spool/cron/crontabs/root \
-  [ -e BACKUP_FILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
+  [ -e BACKUPFILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
   [ -e MONGODB_USERNAME=<DB login username> \ ]
