@@ -42,7 +42,7 @@ docker run --rm \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
   -e S3_TARGET_BUCKET_URL=<Target S3 Bucket URL (s3://...)> \
   -e CRONMODE=true \
-  -v $PWD/crontab/root:/var/spool/cron/crontabs/root \
+  -e CRON_EXPRESSION=<Cron expression (ex. express every four o'clock "0 4 * * *".)> \
   [ -e BACKUPFILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
@@ -71,4 +71,52 @@ docker run --rm \
   weseek/mongodb-awesome-backup restore
 ```
 
+
+Variables
+---------
+
+### variables for `backup`, `prune`, `list`
+
+#### Required
+
+| Variable              | Description                                                           | Default |
+| --------------------- | --------------------------------------------------------------------- | ------- |
+| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                |         |
+| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                            |         |
+| S3_TARGET_BUCKET_URL  | Target S3 Bucket URL (s3://...). **URL is needed to be end with '/'** |         |
+
+#### Optional
+
+| Variable          | Description                                                                                                               | Default |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------- | ------- |
+| BACKUPFILE_PREFIX | Prefix of Backup Filename                                                                                                 | backup  |
+| MONGODB_HOST      | Target MongoDB Host                                                                                                       | mongo   |
+| MONGODB_DBNAME    | Target DB name                                                                                                            | -       |
+| MONGODB_USERNAME  | DB login username                                                                                                         | -       |
+| MONGODB_PASSWORD  | DB login password                                                                                                         | -       |
+| MONGODB_AUTHDB    | Authentication DB name                                                                                                    | -       |
+| CRONMODE          | If you set true, executed in cron mode. In cron mode, backup is executed at time which is specified by `CRON_EXPRESSION`. | false   |
+| CRON_EXPRESSION   | Cron expression. (ex. every four o'clock is expressed by "0 4 * * *".)                                                    | -       |
+
+### variables for `restore`
+
+#### Required
+
+| Variable              | Description                                                           |     |
+| --------------------- | --------------------------------------------------------------------- | --- |
+| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                |     |
+| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                            |     |
+| S3_TARGET_BUCKET_URL  | Target S3 Bucket URL (s3://...). **URL is needed to be end with '/'** |     |
+| S3_TARGET_FILE        | Target S3 file name to restore                                        |     |
+
+#### Optional
+
+| Variable             | Description                           | Default |
+| -------------------- | ------------------------------------- | ------- |
+| MONGODB_HOST         | Target MongoDB Host                   | mongo   |
+| MONGODB_DBNAME       | Target DB name                        | -       |
+| MONGODB_USERNAME     | DB login username                     | -       |
+| MONGODB_PASSWORD     | DB login password                     | -       |
+| MONGODB_AUTHDB       | Authentication DB name                | -       |
+| MONGORESTORE_DROPOPT | Throw '--drop' option to mongorestore | -       |
 
