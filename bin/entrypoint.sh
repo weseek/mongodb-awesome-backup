@@ -12,6 +12,6 @@ if $CRONMODE ; then
   crontab -l
   exec crond -f -d 8
 else
-  exec command_exec.sh $@
+  exec ./command_exec.sh $@
 fi
 
