@@ -3,12 +3,13 @@
 # settings
 MONGODB_HOST=${MONGODB_HOST:-mongo}
 S3_TARGET_FILE=${S3_TARGET_FILE}
-MONGORESTORE_OPTS=${MONGORESTORE_OPTS:-}
 
 # start script
 CWD=`/usr/bin/dirname $0`
 cd $CWD
 . ./functions.sh
+
+MONGORESTORE_OPTS=false
 
 echo "=== $0 started at `/bin/date "+%Y/%m/%d %H:%M:%S"` ==="
 
@@ -44,6 +45,9 @@ time ${TAR_CMD} ${TAR_OPTS} ${TARBALL_FULLPATH} -C ${DIRNAME} ${BASENAME}
 
 
 # restore database
+if $MONGORESTORE_DROPOPT; then
+  MONGORESTORE_OPTS="${MONGORESTORE_OPTS} --drop"
+fi
 if [ "x${MONGODB_DBNAME}" != "x" ]; then
   MONGORESTORE_OPTS="${MONGORESTORE_OPTS} -d ${MONGODB_DBNAME}"
   TARGET=${TARGET}/${MONGODB_DBNAME}
