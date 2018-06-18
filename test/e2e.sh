@@ -2,30 +2,20 @@
 
 # Settings
 S3_ENDPOINT_URL="http://localhost:10080"
-AWSCLIOPT="--endpoint-url=http://s3proxy:80/"
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 LAST_TEST_CONTAINER=""
 
 # Exit test
 handle_exit() {
-  if [ -n "${TESTING_CONTAINER}" ]; then dump_all_log; fi
+  if [ -n "${TESTING_CONTAINER}" ]; then
+    echo "***** TEST FAILED *****"
+    echo "failed test: ${TESTING_CONTAINER}"
+  fi
   TODAY=${TODAY} \
     docker-compose -f docker-compose.yml down
 }
 trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
-
-# Dump all logs of containers
-dump_all_log() {
-  CONTAINER_ID_LIST=$(docker-compose -f docker-compose.yml ps -q)
-  echo "${CONTAINER_ID_LIST}" | while read CONTAINER_ID
-  do
-    echo "===== container logs ====="
-    echo "$(docker ps -a -f id=${CONTAINER_ID})"
-    echo "--------------------------"
-    docker logs ${CONTAINER_ID}
-  done
-}
 
 # check a S3 file is exist
 check_s3_file_exist() {
