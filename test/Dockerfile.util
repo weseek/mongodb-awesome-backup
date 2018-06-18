@@ -1,6 +1,7 @@
 FROM alpine:3.7
 
-LABEL maintainer="WESEEK <info@weseek.co.jp>"
+LABEL maintainer="Ryu Sato <ryu@weseek.co.jp>"
+LABEL description="Build settings of utility container for initialize s3proxy in end to end test."
 
 RUN apk add --no-cache \
     coreutils \

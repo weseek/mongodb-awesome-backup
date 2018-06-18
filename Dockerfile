@@ -10,6 +10,11 @@ RUN apk add --no-cache \
     mongodb-tools
 RUN pip install awscli
 
+# install dockerize(it is needed by e2e test)
+ENV DOCKERIZE_VERSION v0.5.0
+RUN curl -SL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+      | tar -xz -C /usr/local/bin
+
 # set timezone JST
 RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
