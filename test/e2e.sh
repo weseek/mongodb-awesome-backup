@@ -5,6 +5,7 @@
 
 # Settings
 S3_ENDPOINT_URL="http://localhost:10080"
+AWSCLIOPT="--endpoint-url=http://s3proxy:80/"
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 LAST_TEST_CONTAINER=""
 
@@ -44,7 +45,7 @@ cd $CWD
 cd ..
 
 TODAY=${TODAY} \
-  docker-compose -f test/docker-compose.yml up --build &
+  docker-compose -f test/docker-compose.yml up -d --build
 
 # sleep because test backup is executed every minutes in cron mode
 sleep 65

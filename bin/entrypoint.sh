@@ -1,11 +1,5 @@
 #!/bin/bash -e
 
-# environment variables
-ENVIRONMENT=${ENVIRONMENT:-test}
-if [ "ENVIRONMENT" == "test" ]; then
-  AWSCLIOPT="--endpoint-url=http://s3proxy:80/"
-fi
-
 # start script
 CRONMODE=${CRONMODE:-false}
 if $CRONMODE ; then

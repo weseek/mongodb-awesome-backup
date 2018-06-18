@@ -1,8 +1,9 @@
 # default settings
-AWSCLI="/usr/bin/aws ${AWSCLIOPT}"
+AWSCLI="/usr/bin/aws"
 AWSCLI_COPY_OPT="s3 cp"
 AWSCLI_LIST_OPT="s3 ls"
 AWSCLI_DEL_OPT="s3 rm"
+AWSCLIOPT=${AWSCLIOPT:-}
 
 DATE_CMD="/bin/date"
 
@@ -12,20 +13,20 @@ DATE_CMD="/bin/date"
 # arguments: 1. s3 url (s3://.../...)
 s3_exists() {
 	if [ $# -ne 1 ]; then return 255; fi
-	${AWSCLI} ${AWSCLI_LIST_OPT} $1 >/dev/null
+	${AWSCLI} ${AWSCLIOPT} ${AWSCLI_LIST_OPT} $1 >/dev/null
 }
 
 # Output the list of the files on specified S3 URL.
 # arguments: 1. s3 url (s3://...)
 s3_list_files() {
-	${AWSCLI} ${AWSCLI_LIST_OPT} $1
+	${AWSCLI} ${AWSCLIOPT} ${AWSCLI_LIST_OPT} $1
 }
 
 # Delete the specified file.
 # arguments: 1. s3 url (s3://.../...)
 s3_delete_file() {
 	if [ $# -ne 1 ]; then return 255; fi
-	${AWSCLI} ${AWSCLI_DEL_OPT} $1
+	${AWSCLI} ${AWSCLIOPT} ${AWSCLI_DEL_OPT} $1
 }
 
 # Copy the specified file.
@@ -39,7 +40,7 @@ s3_delete_file() {
 #            2. target s3 url (s3://...)
 s3_copy_file() {
 	if [ $# -ne 2 ]; then return 255; fi
-	${AWSCLI} ${AWSCLI_COPY_OPT} $1 $2
+	${AWSCLI} ${AWSCLIOPT} ${AWSCLI_COPY_OPT} $1 $2
 }
 
 # Create today's date string(YYYYmmdd)

@@ -6,7 +6,7 @@ services:
   app_default: &app_default
     build:
       context: ../
-      dockerfile: Dockerfile.test
+      dockerfile: Dockerfile
     env_file:
       - .env
     environment:

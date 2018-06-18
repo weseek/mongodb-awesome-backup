@@ -7,7 +7,8 @@ RUN apk add --no-cache \
     bash \
     tzdata \
     py2-pip \
-    mongodb-tools
+    mongodb-tools \
+    curl
 RUN pip install awscli
 
 # install dockerize(it is needed by e2e test)
