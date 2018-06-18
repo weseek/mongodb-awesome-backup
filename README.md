@@ -67,7 +67,7 @@ docker run --rm \
   [ -e MONGODB_USERNAME=<DB login username> \ ]
   [ -e MONGODB_PASSWORD=<DB login password> \ ]
   [ -e MONGODB_AUTHDB=<Authentication DB name> \ ] 
-  [ -e MONGORESTORE_DROPOPT=<If set "true", add '--drop' option to mongorestore> \ ]
+  [ -e MONGORESTORE_OPTS=<Options list of mongorestore> \ ]
   weseek/mongodb-awesome-backup restore
 ```
 
@@ -111,12 +111,11 @@ Environment variables
 
 #### Optional
 
-| Variable             | Description                                        | Default |
-| -------------------- | -------------------------------------------------- | ------- |
-| MONGODB_HOST         | Target MongoDB Host                                | mongo   |
-| MONGODB_DBNAME       | Target DB name                                     | -       |
-| MONGODB_USERNAME     | DB login username                                  | -       |
-| MONGODB_PASSWORD     | DB login password                                  | -       |
-| MONGODB_AUTHDB       | Authentication DB name                             | -       |
-| MONGORESTORE_DROPOPT | If set "true", add '--drop' option to mongorestore | -       |
-
+| Variable          | Description                               | Default |
+| ----------------- | ----------------------------------------- | ------- |
+| MONGODB_HOST      | Target MongoDB Host                       | mongo   |
+| MONGODB_DBNAME    | Target DB name                            | -       |
+| MONGODB_USERNAME  | DB login username                         | -       |
+| MONGODB_PASSWORD  | DB login password                         | -       |
+| MONGODB_AUTHDB    | Authentication DB name                    | -       |
+| MONGORESTORE_OPTS | Options list of mongorestore. (ex --drop) | -       |
