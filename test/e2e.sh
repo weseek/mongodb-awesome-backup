@@ -10,14 +10,14 @@ LAST_TEST_CONTAINER=""
 handle_exit() {
   if [ -n "${TESTING_CONTAINER}" ]; then dump_all_log; fi
   TODAY=${TODAY} \
-    docker-compose -f test/docker-compose.yml down
+    docker-compose -f docker-compose.yml down
 }
 trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
 
 # Dump all logs of containers
 dump_all_log() {
-  CONTAINER_ID_LIST=$(docker-compose -f test/docker-compose.yml ps -q)
+  CONTAINER_ID_LIST=$(docker-compose -f docker-compose.yml ps -q)
   echo "${CONTAINER_ID_LIST}" | while read CONTAINER_ID
   do
     echo "===== container logs ====="
@@ -39,13 +39,12 @@ check_s3_file_exist() {
 # start test script
 CWD=$(dirname $0)
 cd $CWD
-cd ..
 
 # Read environment variables of Docker
-. test/.env
+. .env
 
 TODAY=${TODAY} \
-  docker-compose -f test/docker-compose.yml up -d --build
+  docker-compose -f docker-compose.yml up -d --build
 
 # sleep because test backup is executed every minutes in cron mode
 sleep 65
