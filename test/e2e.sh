@@ -44,7 +44,7 @@ cd $CWD
 . .env
 
 TODAY=${TODAY} \
-  docker-compose -f docker-compose.yml up -d --build
+  docker-compose -f docker-compose.yml up --build &
 
 # sleep because test backup is executed every minutes in cron mode
 sleep 65
