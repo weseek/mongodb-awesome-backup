@@ -6,7 +6,8 @@ TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 LAST_TEST_CONTAINER=""
 TEST_IMAGE_NAME=${TEST_IMAGE_NAME:-weseek/mongodb-awesome-backup}
 
-# Handle exit and cleanup container
+# Handle exit and execute docker-compose down to remove containers
+#   This function is executed when shell script is exited.
 handle_exit() {
   if [ -n "${TESTING_CONTAINER}" ]; then
     echo "***** TEST FAILED *****"
@@ -18,6 +19,9 @@ trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
 
 # Check a S3 file exist
+#   ARGS
+#     $1 ... ENDPOINT_URL: Endpoint URL of S3
+#     $2 ... S3_FILE_PATH: File path of S3 to be checked for existence
 check_s3_file_exist() {
   if [ $# -ne 2 ]; then return 100; fi
 
