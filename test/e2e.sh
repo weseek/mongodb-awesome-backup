@@ -37,8 +37,15 @@ cd $CWD
 docker-compose -f docker-compose.yml up --build &
 
 # Sleep while s3 bucket is created
-docker wait $(docker ps -a -q -f name=/${COMPOSE_PROJECT_NAME}_init_s3proxy_1)
-#sleep 30
+SLEEP_TIMEOUT=30
+while $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_init_s3proxy_1 | wc -l); do
+  sleep 1
+
+  SLEEP_TIMEOUT=$(expr ${SLEEP_TIMEOUT} - 1)
+  if [ ${SLEEP_TIMEOUT} -le 0 ]; then
+    exit 255;
+  fi
+done
 
 # Test for app_default
 TESTING_CONTAINER="app_default"
