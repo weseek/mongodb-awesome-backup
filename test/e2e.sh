@@ -6,7 +6,7 @@ TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 LAST_TEST_CONTAINER=""
 TEST_IMAGE_NAME=${TEST_IMAGE_NAME:-weseek/mongodb-awesome-backup}
 
-# Exit test
+# Handle exit and cleanup container
 handle_exit() {
   if [ -n "${TESTING_CONTAINER}" ]; then
     echo "***** TEST FAILED *****"
@@ -38,7 +38,7 @@ docker-compose -f docker-compose.yml up --build &
 
 # Sleep while s3 bucket is created
 SLEEP_TIMEOUT=30
-while $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_init_s3proxy_1 | wc -l); do
+while [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_init_s3proxy_1 | wc -l) -ne 1 ]; do
   sleep 1
 
   SLEEP_TIMEOUT=$(expr ${SLEEP_TIMEOUT} - 1)
