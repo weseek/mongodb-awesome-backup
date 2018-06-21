@@ -96,7 +96,7 @@ CONTAINER_ID=$(docker run -d --rm --env-file=.env \
   ${TEST_IMAGE_NAME})
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
-docker stop -t 65 ${CONTAINER_ID} && docker rm ${CONTAINER_ID} && CONTAINER_ID=""
+docker stop -t 65 ${CONTAINER_ID} && CONTAINER_ID=""
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 
