@@ -17,7 +17,7 @@ handle_exit() {
     echo "failed test: ${TESTING_CONTAINER}"
   fi
   docker-compose -f docker-compose.yml down
-  if [ -n "${CONTAINER_ID}"]; then
+  if [ -n "${CONTAINER_ID}" ]; then
     docker stop ${CONTAINER_ID}
   fi
 }
@@ -91,7 +91,7 @@ check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
 
 # Test for backup in cron mode
 TESTING_CONTAINER="app_backup_cronmode"
-## execute app_default
+## execute app_default ([TODO] output log)
 CONTAINER_ID=$(docker run -d --rm --env-file=.env \
   -e S3_TARGET_BUCKET_URL=s3://app_backup_cronmode/ \
   -e CRONMODE=true \
