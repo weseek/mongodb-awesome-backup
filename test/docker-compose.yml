@@ -2,56 +2,6 @@
 version: '3'
 
 services:
-  # test for backup in command mode
-  app_default: &app_default
-    build:
-      context: ../
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    environment:
-      - S3_TARGET_BUCKET_URL=s3://app_default/
-    command:
-      - backup
-      - prune
-      - list
-    entrypoint:
-      "dockerize
-       -wait http://s3proxy:80/app_default/
-       -wait tcp://mongo:27017
-       -timeout 60s
-       /opt/bin/entrypoint.sh"
-
-  # test for backup in cron mode
-  app_backup_cronmode:
-    <<: *app_default
-    environment:
-      - S3_TARGET_BUCKET_URL=s3://app_backup_cronmode/
-      - CRONMODE=true
-      - CRON_EXPRESSION=* * * * *
-    entrypoint:
-      "dockerize
-       -wait http://s3proxy:80/app_backup_cronmode/
-       -wait tcp://mongo:27017
-       -timeout 60s
-       /opt/bin/entrypoint.sh"
-
-  # test for restore
-  app_restore:
-    <<: *app_default
-    environment:
-      - S3_TARGET_BUCKET_URL=s3://app_restore/
-      - S3_TARGET_FILE=backup-${TODAY}.tar.bz2
-    command:
-      - backup
-      - restore
-    entrypoint:
-      "dockerize
-       -wait http://s3proxy:80/app_restore/
-       -wait tcp://mongo:27017
-       -timeout 60s
-       /opt/bin/entrypoint.sh"
-
   # backup target (empty)
   mongo:
     image: mongo:3.4

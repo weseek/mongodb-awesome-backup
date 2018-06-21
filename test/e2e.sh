@@ -4,6 +4,7 @@
 S3_ENDPOINT_URL="http://localhost:10080"
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 LAST_TEST_CONTAINER=""
+TEST_IMAGE_NAME=${TEST_IMAGE_NAME:-weseek/mongodb-awesome-backup}
 
 # Exit test
 handle_exit() {
@@ -17,7 +18,7 @@ handle_exit() {
 trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
 
-# check a S3 file is exist
+# Check a S3 file exist
 check_s3_file_exist() {
   if [ $# -ne 2 ]; then return 100; fi
 
@@ -26,37 +27,59 @@ check_s3_file_exist() {
   curl -I -L --silent "${ENDPOINT_URL}/${S3_FILE_PATH}" 2>&1 | grep -e '^HTTP/' | grep -q '200 OK'
 }
 
-# start test script
+# Start test script
 CWD=$(dirname $0)
 cd $CWD
 
 # Read environment variables of Docker
 . .env
 
+# Start s3proxy and mongodb
 TODAY=${TODAY} \
   docker-compose -f docker-compose.yml up --build &
 
-# sleep because test backup is executed every minutes in cron mode
-sleep 65
+# Sleep while s3 bucket is created
+sleep 30
 
-# app_default
+# Test for app_default
 TESTING_CONTAINER="app_default"
+## execute app_default (exit code should be 0)
+docker run --rm --env-file=.env \
+  -e S3_TARGET_BUCKET_URL=s3://app_default/ \
+  --link mongodb_awesome_backup_test_mongodb:mongo \
+  --network mongodb_awesome_backup_test_default \
+  ${TEST_IMAGE_NAME}
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
-## exit code should be 0
-##   see. https://blog.m4i.jp/2016/02/16/docker-ps-filter
-test $(docker ps -a -q -f exited=0 -f name=/${COMPOSE_PROJECT_NAME}_app_default | wc -l) -eq 1
 
 # Test for app_restore
 TESTING_CONTAINER="app_restore"
+## execute app_restore (exit code should be 0)
+docker run --rm --env-file=.env \
+  -e S3_TARGET_BUCKET_URL=s3://app_restore/ \
+  -e S3_TARGET_FILE=backup-${TODAY}.tar.bz2 \
+  --link mongodb_awesome_backup_test_mongodb:mongo \
+  --network mongodb_awesome_backup_test_default \
+  ${TEST_IMAGE_NAME} backup restore
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
-## exit code should be 0
-##   see. https://blog.m4i.jp/2016/02/16/docker-ps-filter
-test $(docker ps -a -q -f exited=0 -f name=/${COMPOSE_PROJECT_NAME}_app_restore | wc -l) -eq 1
+## [TODO] should restored mongodb
 
-# test for backup in cron mode
+# Test for backup in cron mode
 TESTING_CONTAINER="app_backup_cronmode"
+## execute app_default
+docker run -d --name ${TESTING_CONTAINER} --rm --env-file=.env \
+  -e S3_TARGET_BUCKET_URL=s3://app_backup_cronmode/ \
+  -e CRONMODE=true \
+  -e "CRON_EXPRESSION=* * * * *" \
+  --link mongodb_awesome_backup_test_mongodb:mongo \
+  --network mongodb_awesome_backup_test_default \
+  ${TEST_IMAGE_NAME}
+CONTAINER_ID=$?
+## sleep because test backup is executed every minute in cron mode
+sleep 65
+## stop container
+docker stop ${CONTAINER_ID}
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 
