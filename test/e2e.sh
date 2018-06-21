@@ -1,4 +1,6 @@
 #!/bin/bash -e
+# This shell script is end to end test program.
+# 
 
 # Settings
 S3_ENDPOINT_URL="http://localhost:10080"
@@ -14,6 +16,10 @@ handle_exit() {
     echo "failed test: ${TESTING_CONTAINER}"
   fi
   docker-compose -f docker-compose.yml down
+  if [ -n "${CONTAINER_ID}"]; then
+    docker stop ${CONTAINER_ID}
+    docker rm ${CONTAINER_ID}
+  fi
 }
 trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
@@ -80,19 +86,17 @@ check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
 # Test for backup in cron mode
 TESTING_CONTAINER="app_backup_cronmode"
 ## execute app_default
-docker run -d --name ${TESTING_CONTAINER} --rm --env-file=.env \
+CONTAINER_ID=$(docker run -d --rm --env-file=.env \
   -e S3_TARGET_BUCKET_URL=s3://app_backup_cronmode/ \
   -e CRONMODE=true \
   -e "CRON_EXPRESSION=* * * * *" \
   --link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo \
   --link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy \
   --network ${COMPOSE_PROJECT_NAME}_default \
-  ${TEST_IMAGE_NAME}
-CONTAINER_ID=$?
-## sleep because test backup is executed every minute in cron mode
-sleep 65
+  ${TEST_IMAGE_NAME})
 ## stop container
-docker stop ${CONTAINER_ID}
+##   before stop, sleep 65s because test backup is executed every minute in cron mode
+docker stop -t 65 ${CONTAINER_ID} && docker rm ${CONTAINER_ID} && CONTAINER_ID=""
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 
