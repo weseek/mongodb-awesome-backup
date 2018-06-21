@@ -1,12 +1,15 @@
 #!/bin/bash -e
-# This shell script is end to end test program.
+# End to end test script
 # 
+# Environment Variables
+#   TEST_TARGET_IMAGE_TAG: Tag name of testing the target image is set by TEST_TARGET_IMAGE_TAG.
+#                          (Default value is 'weseek/mongodb-awesome-backup')
 
 # Settings
 S3_ENDPOINT_URL="http://localhost:10080"
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 LAST_TEST_CONTAINER=""
-TEST_IMAGE_NAME=${TEST_IMAGE_NAME:-weseek/mongodb-awesome-backup}
+TEST_TARGET_IMAGE_TAG=${TEST_TARGET_IMAGE_TAG:-weseek/mongodb-awesome-backup}
 
 # Handle exit and execute docker-compose down to remove containers
 #   This function is executed when shell script is exited.
@@ -65,7 +68,7 @@ docker run --rm --env-file=.env \
   --link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo \
   --link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy \
   --network ${COMPOSE_PROJECT_NAME}_default \
-  ${TEST_IMAGE_NAME}
+  ${TEST_TARGET_IMAGE_TAG}
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
 
@@ -78,7 +81,7 @@ docker run --rm --env-file=.env \
   --link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo \
   --link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy \
   --network ${COMPOSE_PROJECT_NAME}_default \
-  ${TEST_IMAGE_NAME} backup restore
+  ${TEST_TARGET_IMAGE_TAG} backup restore
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
 ## [TODO] should restored mongodb
@@ -93,7 +96,7 @@ CONTAINER_ID=$(docker run -d --rm --env-file=.env \
   --link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo \
   --link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy \
   --network ${COMPOSE_PROJECT_NAME}_default \
-  ${TEST_IMAGE_NAME})
+  ${TEST_TARGET_IMAGE_TAG})
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
 docker stop -t 65 ${CONTAINER_ID} && CONTAINER_ID=""
