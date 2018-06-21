@@ -40,6 +40,9 @@ check_s3_file_exist() {
 CWD=$(dirname $0)
 cd $CWD
 
+# Read environment variables of Docker
+. .env
+
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 DOCKER_RUN_COMMON_OPT=$(cat << EOV
 --link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo
@@ -49,9 +52,6 @@ EOV
 )
 LAST_TEST_CONTAINER=""
 CONTAINER_ID=""
-
-# Read environment variables of Docker
-. .env
 
 # Start s3proxy and mongodb
 docker-compose -f docker-compose.yml up --build &
