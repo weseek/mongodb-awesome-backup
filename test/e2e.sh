@@ -12,8 +12,7 @@ handle_exit() {
     echo "***** TEST FAILED *****"
     echo "failed test: ${TESTING_CONTAINER}"
   fi
-  TODAY=${TODAY} \
-    docker-compose -f docker-compose.yml down
+  docker-compose -f docker-compose.yml down
 }
 trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
@@ -35,11 +34,11 @@ cd $CWD
 . .env
 
 # Start s3proxy and mongodb
-TODAY=${TODAY} \
-  docker-compose -f docker-compose.yml up --build &
+docker-compose -f docker-compose.yml up --build &
 
 # Sleep while s3 bucket is created
-sleep 30
+docker wait $(docker ps -a -q -f name=/${COMPOSE_PROJECT_NAME}_init_s3proxy_1)
+#sleep 30
 
 # Test for app_default
 TESTING_CONTAINER="app_default"
