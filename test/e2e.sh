@@ -53,6 +53,7 @@ TESTING_CONTAINER="app_default"
 docker run --rm --env-file=.env \
   -e S3_TARGET_BUCKET_URL=s3://app_default/ \
   --link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo \
+  --link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy \
   --network ${COMPOSE_PROJECT_NAME}_default \
   ${TEST_IMAGE_NAME}
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
@@ -65,6 +66,7 @@ docker run --rm --env-file=.env \
   -e S3_TARGET_BUCKET_URL=s3://app_restore/ \
   -e S3_TARGET_FILE=backup-${TODAY}.tar.bz2 \
   --link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo \
+  --link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy \
   --network ${COMPOSE_PROJECT_NAME}_default \
   ${TEST_IMAGE_NAME} backup restore
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
@@ -79,6 +81,7 @@ docker run -d --name ${TESTING_CONTAINER} --rm --env-file=.env \
   -e CRONMODE=true \
   -e "CRON_EXPRESSION=* * * * *" \
   --link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo \
+  --link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy \
   --network ${COMPOSE_PROJECT_NAME}_default \
   ${TEST_IMAGE_NAME}
 CONTAINER_ID=$?
