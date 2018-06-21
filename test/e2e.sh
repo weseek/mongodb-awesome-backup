@@ -46,8 +46,8 @@ TESTING_CONTAINER="app_default"
 ## execute app_default (exit code should be 0)
 docker run --rm --env-file=.env \
   -e S3_TARGET_BUCKET_URL=s3://app_default/ \
-  --link mongodb_awesome_backup_test_mongodb:mongo \
-  --network mongodb_awesome_backup_test_default \
+  --link ${COMPOSE_PROJECT_NAME}_mongodb:mongo \
+  --network ${COMPOSE_PROJECT_NAME}_default \
   ${TEST_IMAGE_NAME}
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
@@ -58,8 +58,8 @@ TESTING_CONTAINER="app_restore"
 docker run --rm --env-file=.env \
   -e S3_TARGET_BUCKET_URL=s3://app_restore/ \
   -e S3_TARGET_FILE=backup-${TODAY}.tar.bz2 \
-  --link mongodb_awesome_backup_test_mongodb:mongo \
-  --network mongodb_awesome_backup_test_default \
+  --link ${COMPOSE_PROJECT_NAME}_mongodb:mongo \
+  --network ${COMPOSE_PROJECT_NAME}_default \
   ${TEST_IMAGE_NAME} backup restore
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
@@ -72,8 +72,8 @@ docker run -d --name ${TESTING_CONTAINER} --rm --env-file=.env \
   -e S3_TARGET_BUCKET_URL=s3://app_backup_cronmode/ \
   -e CRONMODE=true \
   -e "CRON_EXPRESSION=* * * * *" \
-  --link mongodb_awesome_backup_test_mongodb:mongo \
-  --network mongodb_awesome_backup_test_default \
+  --link ${COMPOSE_PROJECT_NAME}_mongodb:mongo \
+  --network ${COMPOSE_PROJECT_NAME}_default \
   ${TEST_IMAGE_NAME}
 CONTAINER_ID=$?
 ## sleep because test backup is executed every minute in cron mode
