@@ -7,8 +7,6 @@
 
 # Settings
 S3_ENDPOINT_URL="http://localhost:10080"
-TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
-LAST_TEST_CONTAINER=""
 TEST_TARGET_IMAGE_TAG=${TEST_TARGET_IMAGE_TAG:-weseek/mongodb-awesome-backup}
 
 # Handle exit and execute docker-compose down to remove containers
@@ -21,7 +19,6 @@ handle_exit() {
   docker-compose -f docker-compose.yml down
   if [ -n "${CONTAINER_ID}"]; then
     docker stop ${CONTAINER_ID}
-    docker rm ${CONTAINER_ID}
   fi
 }
 trap handle_exit EXIT
@@ -42,6 +39,16 @@ check_s3_file_exist() {
 # Start test script
 CWD=$(dirname $0)
 cd $CWD
+
+TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
+DOCKER_RUN_COMMON_OPT=$(cat << EOV
+--link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo
+--link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy
+--network ${COMPOSE_PROJECT_NAME}_default
+EOV
+)
+LAST_TEST_CONTAINER=""
+CONTAINER_ID=""
 
 # Read environment variables of Docker
 . .env
@@ -65,9 +72,7 @@ TESTING_CONTAINER="app_default"
 ## execute app_default (exit code should be 0)
 docker run --rm --env-file=.env \
   -e S3_TARGET_BUCKET_URL=s3://app_default/ \
-  --link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo \
-  --link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy \
-  --network ${COMPOSE_PROJECT_NAME}_default \
+  ${DOCKER_RUN_COMMON_OPT} \
   ${TEST_TARGET_IMAGE_TAG}
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
@@ -78,9 +83,7 @@ TESTING_CONTAINER="app_restore"
 docker run --rm --env-file=.env \
   -e S3_TARGET_BUCKET_URL=s3://app_restore/ \
   -e S3_TARGET_FILE=backup-${TODAY}.tar.bz2 \
-  --link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo \
-  --link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy \
-  --network ${COMPOSE_PROJECT_NAME}_default \
+  ${DOCKER_RUN_COMMON_OPT} \
   ${TEST_TARGET_IMAGE_TAG} backup restore
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
@@ -93,9 +96,7 @@ CONTAINER_ID=$(docker run -d --rm --env-file=.env \
   -e S3_TARGET_BUCKET_URL=s3://app_backup_cronmode/ \
   -e CRONMODE=true \
   -e "CRON_EXPRESSION=* * * * *" \
-  --link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo \
-  --link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy \
-  --network ${COMPOSE_PROJECT_NAME}_default \
+  ${DOCKER_RUN_COMMON_OPT} \
   ${TEST_TARGET_IMAGE_TAG})
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
