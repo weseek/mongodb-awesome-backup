@@ -21,6 +21,30 @@ check_s3_file_exist() {
   curl -I -L --silent "${ENDPOINT_URL}/${S3_FILE_PATH}" 2>&1 | grep -e '^HTTP/' | grep -q '200 OK'
 }
 
+# Wait while container exist
+#   ARGS
+#     $1 ... CONTAINER_NAME: container name
+wait_docker_container() {
+  if [ $# -ne 1 ]; then return 100; fi
+
+  CONTAINER_NAME=$1
+  CONTAINER_ID=$(docker ps -a -q -f name=/${COMPOSE_PROJECT_NAME}_${CONTAINER_NAME})
+  docker wait ${CONTAINER_ID}
+}
+
+# Wait while container exist
+#   ARGS
+#     $1 ... CONTAINER_NAME: container name
+#     $2 ... DOCKER_STOP_OPT: options of docker stop
+stop_docker_container() {
+  if [ $# -le 1 ]; then return 100; fi
+
+  CONTAINER_NAME=$1
+  DOCKER_STOP_OPT=$2
+  CONTAINER_ID=$(docker ps -a -q -f name=/${COMPOSE_PROJECT_NAME}_${CONTAINER_NAME})
+  docker stop ${DOCKER_STOP_OPT} ${CONTAINER_ID}
+}
+
 # Start test script
 CWD=$(dirname $0)
 cd $CWD
@@ -55,11 +79,13 @@ TODAY=${TODAY} \
 
 # Expect for app_default
 echo "TEST for app_default"
+wait_docker_container app_default
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
 
 # Expect for app_restore
 echo "TEST for app_restore"
+wait_docker_container app_restore
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
 ## [TODO] should restored mongodb
@@ -68,8 +94,7 @@ check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
 echo "TEST for app_backup_cronmode"
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
-CONTAINER_ID=$(docker ps -a -q -f name=/${COMPOSE_PROJECT_NAME}_app_backup_cronmode_1)
-docker stop -t 65 ${CONTAINER_ID}
+stop_docker_container app_backup_cronmode "-t 65"
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 
