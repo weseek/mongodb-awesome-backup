@@ -39,7 +39,7 @@ services:
   init_s3proxy_and_mongo:
     build:
       context: ./
-      dockerfile: Dockerfile.util
+      dockerfile: Dockerfile.init_test
     env_file:
       - .env
     entrypoint:
