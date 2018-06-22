@@ -58,7 +58,7 @@ done
 
 # Execute test
 TODAY=${TODAY} \
-  docker-compose -f docker-compose.e2e_test.yml
+  docker-compose -f docker-compose.e2e_test.yml up --build &
 
 # Expect for app_default
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
