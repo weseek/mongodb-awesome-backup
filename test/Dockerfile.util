@@ -1,7 +1,7 @@
 FROM alpine:3.7
 
 LABEL maintainer="Ryu Sato <ryu@weseek.co.jp>"
-LABEL description="Create S3 bucket by curl for test"
+LABEL description="Create S3 bucket by curl and wait until mongodb is initialized for test"
 
 RUN apk add --no-cache \
     coreutils \

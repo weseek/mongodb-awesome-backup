@@ -43,11 +43,11 @@ cd $CWD
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 
 # Start s3proxy and mongodb
-docker-compose -f docker-compose.yml up --build init_s3proxy s3proxy &
+docker-compose -f docker-compose.yml up --build init_s3proxy_and_mongodb s3proxy mongodb &
 
 # Sleep while s3 bucket is created
 SLEEP_TIMEOUT=30
-while [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_init_s3proxy_1 | wc -l) -ne 1 ]; do
+while [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_init_s3proxy_and_mongodb_1 | wc -l) -ne 1 ]; do
   sleep 1
 
   SLEEP_TIMEOUT=$(expr ${SLEEP_TIMEOUT} - 1)
