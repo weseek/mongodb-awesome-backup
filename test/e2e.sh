@@ -36,18 +36,7 @@ TODAY=${TODAY} \
 
 # Start s3proxy and mongodb
 TODAY=${TODAY} \
-  docker-compose up --build init_s3proxy_and_mongo s3proxy mongo &
-
-# Sleep while s3 bucket is created
-SLEEP_TIMEOUT=30
-while [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_init_s3proxy_and_mongo_1 | wc -l) -ne 1 ]; do
-  sleep 1
-
-  SLEEP_TIMEOUT=$(expr ${SLEEP_TIMEOUT} - 1)
-  if [ ${SLEEP_TIMEOUT} -le 0 ]; then
-    exit 255;
-  fi
-done
+  docker-compose up --build init_s3proxy_and_mongo s3proxy mongo
 
 # Execute test
 TODAY=${TODAY} \
@@ -65,7 +54,7 @@ check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
 # Expect for app_backup_cronmode
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
-CONTAINER_ID=$(docker run -a -q -f name=/${COMPOSE_PROJECT_NAME}_app_backup_cronmode_1)
+CONTAINER_ID=$(docker ps -a -q -f name=/${COMPOSE_PROJECT_NAME}_app_backup_cronmode_1)
 docker stop -t 65 ${CONTAINER_ID}
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
