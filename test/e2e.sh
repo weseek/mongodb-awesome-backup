@@ -36,7 +36,18 @@ TODAY=${TODAY} \
 
 # Start s3proxy and mongodb
 TODAY=${TODAY} \
-  docker-compose up --build init_s3proxy_and_mongo s3proxy mongo
+  docker-compose up --build init_s3proxy_and_mongo s3proxy mongo &
+
+# Sleep while s3 bucket is created
+SLEEP_TIMEOUT=30
+while [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_init_s3proxy_and_mongo_1 | wc -l) -ne 1 ]; do
+  sleep 1
+
+  SLEEP_TIMEOUT=$(expr ${SLEEP_TIMEOUT} - 1)
+  if [ ${SLEEP_TIMEOUT} -le 0 ]; then
+    exit 255;
+  fi
+done
 
 # Execute test
 TODAY=${TODAY} \
