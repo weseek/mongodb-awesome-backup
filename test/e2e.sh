@@ -29,7 +29,15 @@ wait_docker_container() {
 
   CONTAINER_NAME=$1
   CONTAINER_ID=$(docker ps -a -q -f name=/${COMPOSE_PROJECT_NAME}_${CONTAINER_NAME})
-  docker wait ${CONTAINER_ID}
+  SLEEP_TIMEOUT=30
+  while [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_${CONTAINER_NAME} | wc -l) -ne 1 ]; do
+    sleep 1
+
+    SLEEP_TIMEOUT=$(expr ${SLEEP_TIMEOUT} - 1)
+    if [ ${SLEEP_TIMEOUT} -le 0 ]; then
+      exit 101;
+    fi
+  done
 }
 
 # Wait while container exist
@@ -63,15 +71,7 @@ TODAY=${TODAY} \
   docker-compose up --build init_s3proxy_and_mongo s3proxy mongo &
 
 # Sleep while s3 bucket is created
-SLEEP_TIMEOUT=30
-while [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_init_s3proxy_and_mongo_1 | wc -l) -ne 1 ]; do
-  sleep 1
-
-  SLEEP_TIMEOUT=$(expr ${SLEEP_TIMEOUT} - 1)
-  if [ ${SLEEP_TIMEOUT} -le 0 ]; then
-    exit 255;
-  fi
-done
+wait_docker_container "init_s3proxy_and_mongo"
 
 # Execute test
 TODAY=${TODAY} \
@@ -79,13 +79,13 @@ TODAY=${TODAY} \
 
 # Expect for app_default
 echo "TEST for app_default"
-wait_docker_container app_default
+wait_docker_container "app_default"
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
 
 # Expect for app_restore
 echo "TEST for app_restore"
-wait_docker_container app_restore
+wait_docker_container "app_restore"
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
 ## [TODO] should restored mongodb
