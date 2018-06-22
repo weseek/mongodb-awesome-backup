@@ -94,7 +94,7 @@ check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
 echo "TEST for app_backup_cronmode"
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
-stop_docker_container app_backup_cronmode "-t 65"
+stop_docker_container "app_backup_cronmode" "-t 65"
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 
