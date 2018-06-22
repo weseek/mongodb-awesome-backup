@@ -37,7 +37,7 @@ services:
       - TZ=Asia/Tokyo
 
   # initialize S3 bucket for test
-  init_s3proxy_and_mongodb:
+  init_s3proxy_and_mongo:
     build:
       context: ./
       dockerfile: Dockerfile.util
