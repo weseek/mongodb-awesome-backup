@@ -78,25 +78,25 @@ TODAY=${TODAY} \
   docker-compose up --build app_default app_backup_cronmode app_restore &
 
 # Expect for app_default
-echo "TEST for app_default"
+echo -n "TEST for app_default: "
 wait_docker_container "app_default"
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
-check_s3_file_exist ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
+check_s3_file_exist ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2" && echo 'OK'
 
 # Expect for app_restore
-echo "TEST for app_restore"
+echo -n "TEST for app_restore: "
 wait_docker_container "app_restore"
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
-check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
+check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2" && echo 'OK'
 ## [TODO] should restored mongodb
 
 # Expect for app_backup_cronmode
-echo "TEST for app_backup_cronmode"
+echo -n "TEST for app_backup_cronmode"
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
 stop_docker_container "app_backup_cronmode" "-t 65"
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
-check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
+check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2" && echo 'OK'
 
 # Clean up before start s3proxy and mongodb
 TODAY=${TODAY} \
