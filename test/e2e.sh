@@ -9,18 +9,6 @@
 S3_ENDPOINT_URL="http://localhost:10080"
 TEST_TARGET_IMAGE_TAG=${TEST_TARGET_IMAGE_TAG:-weseek/mongodb-awesome-backup}
 
-# Handle exit and execute docker-compose down to remove containers
-#   This function is executed when shell script is exited.
-handle_exit() {
-  if [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME} | wc -l) -ne 0 ]; then
-    echo "***** TEST FAILED *****"
-  fi
-  docker-compose down
-  exit 1
-}
-trap handle_exit EXIT
-trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
-
 # Check a S3 file exist
 #   ARGS
 #     $1 ... ENDPOINT_URL: Endpoint URL of S3
@@ -41,6 +29,10 @@ cd $CWD
 . .env
 
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
+
+# Clean up before start s3proxy and mongodb
+TODAY=${TODAY} \
+  docker-compose down
 
 # Start s3proxy and mongodb
 TODAY=${TODAY} \
