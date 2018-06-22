@@ -43,7 +43,7 @@ cd $CWD
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 
 # Start s3proxy and mongodb
-docker-compose -f docker-compose.yml up init_s3proxy s3proxy --build &
+docker-compose -f docker-compose.yml up --build init_s3proxy s3proxy &
 
 # Sleep while s3 bucket is created
 SLEEP_TIMEOUT=30
@@ -58,7 +58,7 @@ done
 
 # Execute test
 TODAY=${TODAY} \
-  docker-compose -f docker-compose.yml up app_default app_backup_cronmode app_restore --build &
+  docker-compose -f docker-compose.yml up --build app_default app_backup_cronmode app_restore &
 
 # Expect for app_default
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
