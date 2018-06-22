@@ -54,15 +54,18 @@ TODAY=${TODAY} \
   docker-compose up --build app_default app_backup_cronmode app_restore &
 
 # Expect for app_default
+echo "TEST for app_default"
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
 
 # Expect for app_restore
+echo "TEST for app_restore"
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
 ## [TODO] should restored mongodb
 
 # Expect for app_backup_cronmode
+echo "TEST for app_backup_cronmode"
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
 CONTAINER_ID=$(docker ps -a -q -f name=/${COMPOSE_PROJECT_NAME}_app_backup_cronmode_1)
