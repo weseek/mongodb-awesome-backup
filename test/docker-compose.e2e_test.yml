@@ -1,0 +1,37 @@
+# This file would be executed from e2e.sh
+version: '3'
+
+services:
+  # test for backup in command mode
+  app_default: &app_default
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo
+      - s3proxy
+    external_links:
+      - s3proxy:s3proxy
+      - mongo:mongo
+    env_file:
+      - .env
+    environment:
+      - S3_TARGET_BUCKET_URL=s3://app_default/
+
+  # test for backup in cron mode
+  app_backup_cronmode:
+    <<: *app_default
+    environment:
+      - S3_TARGET_BUCKET_URL=s3://app_backup_cronmode/
+      - CRONMODE=true
+      - CRON_EXPRESSION=* * * * *
+
+  # test for restore
+  app_restore:
+    <<: *app_default
+    environment:
+      - S3_TARGET_BUCKET_URL=s3://app_restore/
+      - S3_TARGET_FILE=backup-${TODAY}.tar.bz2
+    command:
+      - backup
+      - restore

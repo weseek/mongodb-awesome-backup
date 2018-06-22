@@ -12,14 +12,11 @@ TEST_TARGET_IMAGE_TAG=${TEST_TARGET_IMAGE_TAG:-weseek/mongodb-awesome-backup}
 # Handle exit and execute docker-compose down to remove containers
 #   This function is executed when shell script is exited.
 handle_exit() {
-  if [ -n "${TESTING_CONTAINER}" ]; then
+  if [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME} | wc -l) -ne 0 ]; then
     echo "***** TEST FAILED *****"
-    echo "failed test: ${TESTING_CONTAINER}"
   fi
-  docker-compose -f docker-compose.yml down
-  if [ -n "${CONTAINER_ID}" ]; then
-    docker stop ${CONTAINER_ID}
-  fi
+  docker-compose -f docker-compose.s3mock_and_mongodb.yml down
+  docker-compose -f docker-compose.e2e_test.yml down
 }
 trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
@@ -44,17 +41,9 @@ cd $CWD
 . .env
 
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
-DOCKER_RUN_COMMON_OPT=$(cat << EOV
---link ${COMPOSE_PROJECT_NAME}_mongo_1:mongo
---link ${COMPOSE_PROJECT_NAME}_s3proxy_1:s3proxy
---network ${COMPOSE_PROJECT_NAME}_default
-EOV
-)
-LAST_TEST_CONTAINER=""
-CONTAINER_ID=""
 
 # Start s3proxy and mongodb
-docker-compose -f docker-compose.yml up --build &
+docker-compose -f docker-compose.s3mock_and_mongodb.yml up --build &
 
 # Sleep while s3 bucket is created
 SLEEP_TIMEOUT=30
@@ -67,42 +56,25 @@ while [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_init
   fi
 done
 
-# Test for app_default
-TESTING_CONTAINER="app_default"
-## execute app_default (exit code should be 0)
-docker run --rm --env-file=.env \
-  -e S3_TARGET_BUCKET_URL=s3://app_default/ \
-  ${DOCKER_RUN_COMMON_OPT} \
-  ${TEST_TARGET_IMAGE_TAG}
+# Execute test
+TODAY=${TODAY} \
+  docker-compose -f docker-compose.e2e_test.yml
+
+# Expect for app_default
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
 
-# Test for app_restore
-TESTING_CONTAINER="app_restore"
-## execute app_restore (exit code should be 0)
-docker run --rm --env-file=.env \
-  -e S3_TARGET_BUCKET_URL=s3://app_restore/ \
-  -e S3_TARGET_FILE=backup-${TODAY}.tar.bz2 \
-  ${DOCKER_RUN_COMMON_OPT} \
-  ${TEST_TARGET_IMAGE_TAG} backup restore
+# Expect for app_restore
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
 ## [TODO] should restored mongodb
 
-# Test for backup in cron mode
-TESTING_CONTAINER="app_backup_cronmode"
-## execute app_default ([TODO] output log)
-CONTAINER_ID=$(docker run -d --rm --env-file=.env \
-  -e S3_TARGET_BUCKET_URL=s3://app_backup_cronmode/ \
-  -e CRONMODE=true \
-  -e "CRON_EXPRESSION=* * * * *" \
-  ${DOCKER_RUN_COMMON_OPT} \
-  ${TEST_TARGET_IMAGE_TAG})
+# Expect for app_backup_cronmode
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
-docker stop -t 65 ${CONTAINER_ID} && CONTAINER_ID=""
+CONTAINER_ID=$(docker run -a -q -f name=/${COMPOSE_PROJECT_NAME}_app_backup_cronmode_1)
+docker stop -t 65 ${CONTAINER_ID}
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 
-TESTING_CONTAINER=""
 echo "***** ALL TESTS ARE SUCCESSFUL *****"
