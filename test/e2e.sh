@@ -63,19 +63,16 @@ cd $CWD
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 
 # Clean up before start s3proxy and mongodb
-TODAY=${TODAY} \
-  docker-compose down
+docker-compose down
 
 # Start s3proxy and mongodb
-TODAY=${TODAY} \
-  docker-compose up --build init_s3proxy_and_mongo s3proxy mongo &
+docker-compose up --build init_s3proxy_and_mongo s3proxy mongo &
 
 # Sleep while s3 bucket is created
 wait_docker_container "init_s3proxy_and_mongo"
 
 # Execute test
-TODAY=${TODAY} \
-  docker-compose up --build app_default app_backup_cronmode app_restore &
+docker-compose up --build app_default app_backup_cronmode app_restore &
 
 # Expect for app_default
 wait_docker_container "app_default"
@@ -85,9 +82,9 @@ echo 'Finished test for app_default: OK'
 
 # Expect for app_restore
 wait_docker_container "app_restore"
-## should upload file `backup-#{TODAY}.tar.bz2` to S3
-check_s3_file_exist ${S3_ENDPOINT_URL} "app_restore/backup-${TODAY}.tar.bz2"
-## [TODO] should restored mongodb
+## should restored mongodb
+DUMMY_RECORD_NUM=$(docker-compose exec mongo bash -c 'echo -e "use dummy;\n db.dummy.find({name: \"test\"})\n" | mongo | grep "ObjectId" | wc -l')
+if [ "x${DUMMY_RECORD_NUM}" = "x1" ]; then echo 'FAILED'; exit 1; fi
 echo 'Finished test for app_restore: OK'
 
 # Expect for app_backup_cronmode
@@ -99,7 +96,6 @@ check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.
 echo 'Finished test for app_backup_cronmode: OK'
 
 # Clean up all containers
-TODAY=${TODAY} \
-  docker-compose down
+docker-compose down
 
 echo "***** ALL TESTS ARE SUCCESSFUL *****"
