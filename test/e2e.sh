@@ -15,8 +15,7 @@ handle_exit() {
   if [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME} | wc -l) -ne 0 ]; then
     echo "***** TEST FAILED *****"
   fi
-  docker-compose -f docker-compose.s3mock_and_mongodb.yml down
-  docker-compose -f docker-compose.e2e_test.yml down
+  docker-compose down
 }
 trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
@@ -43,7 +42,7 @@ cd $CWD
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 
 # Start s3proxy and mongodb
-docker-compose -f docker-compose.yml up --build init_s3proxy_and_mongo s3proxy mongo &
+docker-compose up --build init_s3proxy_and_mongo s3proxy mongo &
 
 # Sleep while s3 bucket is created
 SLEEP_TIMEOUT=30
@@ -58,7 +57,7 @@ done
 
 # Execute test
 TODAY=${TODAY} \
-  docker-compose -f docker-compose.yml up --build app_default app_backup_cronmode app_restore &
+  docker-compose up --build app_default app_backup_cronmode app_restore &
 
 # Expect for app_default
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
