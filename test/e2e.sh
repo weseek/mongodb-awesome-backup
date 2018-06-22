@@ -16,6 +16,7 @@ handle_exit() {
     echo "***** TEST FAILED *****"
   fi
   docker-compose down
+  exit 1
 }
 trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
@@ -42,7 +43,8 @@ cd $CWD
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 
 # Start s3proxy and mongodb
-docker-compose up --build init_s3proxy_and_mongo s3proxy mongo &
+TODAY=${TODAY} \
+  docker-compose up --build init_s3proxy_and_mongo s3proxy mongo &
 
 # Sleep while s3 bucket is created
 SLEEP_TIMEOUT=30
