@@ -98,7 +98,7 @@ stop_docker_container "app_backup_cronmode" "-t 65"
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 echo 'Finished test for app_backup_cronmode: OK'
 
-# Clean up before start s3proxy and mongodb
+# Clean up all containers
 TODAY=${TODAY} \
   docker-compose down
 
