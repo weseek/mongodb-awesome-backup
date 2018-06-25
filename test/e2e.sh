@@ -18,9 +18,9 @@ assert_file_exists_on_s3() {
 }
 
 # assert restore successful
-assert_restore_successful () {
-  DUMMY_RECORD_NUM=$(docker-compose exec mongo bash -c 'echo -e "use dummy;\n db.dummy.find({name: \"test\"})\n" | mongo | grep "ObjectId" | wc -l')
-  if [ "x${DUMMY_RECORD_NUM}" != "x1" ]; then echo 'assert_restore_successful FAILED'; exit 1; fi
+assert_restore_dummy_record () {
+  docker-compose exec mongo bash -c 'echo -e "use dummy;\n db.dummy.find({name: \"test\"})\n" | mongo | grep -q "ObjectId"'
+  if [ $? -ne 0 ]; then echo 'assert_restore_dummy_record FAILED'; exit 1; fi
 }
 
 # Wait while container exist
@@ -71,7 +71,7 @@ echo 'Finished test for app_default: OK'
 # Expect for app_restore
 wait_docker_container "app_restore"
 ## should restored mongodb
-assert_restore_successful 
+assert_restore_dummy_record
 echo 'Finished test for app_restore: OK'
 
 # Expect for app_backup_cronmode
