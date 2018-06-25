@@ -63,7 +63,7 @@ cd $CWD
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 
 # Clean up before start s3proxy and mongodb
-docker-compose down
+docker-compose down -v
 
 # Start s3proxy and mongodb
 docker-compose up --build init_s3proxy_and_mongo s3proxy mongo &
@@ -96,6 +96,6 @@ check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.
 echo 'Finished test for app_backup_cronmode: OK'
 
 # Clean up all containers
-docker-compose down
+docker-compose down -v
 
 echo "***** ALL TESTS ARE SUCCESSFUL *****"
