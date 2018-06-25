@@ -25,7 +25,7 @@ assert_file_exists_on_s3() {
 # assert restore successful
 assert_restore_successful () {
   DUMMY_RECORD_NUM=$(docker-compose exec mongo bash -c 'echo -e "use dummy;\n db.dummy.find({name: \"test\"})\n" | mongo | grep "ObjectId" | wc -l')
-  if [ "x${DUMMY_RECORD_NUM}" = "x1" ]; then echo 'FAILED'; exit 1; fi
+  if [ "x${DUMMY_RECORD_NUM}" != "x1" ]; then echo 'FAILED'; exit 1; fi
 }
 
 # Wait while container exist
