@@ -1,13 +1,8 @@
 #!/bin/bash -e
 # End to end test script
-# 
-# Environment Variables
-#   TEST_TARGET_IMAGE_TAG: Tag name of testing the target image is set by TEST_TARGET_IMAGE_TAG.
-#                          (Default value is 'weseek/mongodb-awesome-backup')
 
 # Settings
 S3_ENDPOINT_URL="http://localhost:10080"
-TEST_TARGET_IMAGE_TAG=${TEST_TARGET_IMAGE_TAG:-weseek/mongodb-awesome-backup}
 
 # assert file exist on s3
 #   ARGS
@@ -19,7 +14,7 @@ assert_file_exists_on_s3() {
   ENDPOINT_URL=$1
   S3_FILE_PATH=$2
   HTTP_OK=$(curl -I -L --silent "${ENDPOINT_URL}/${S3_FILE_PATH}" 2>&1 | grep -e '^HTTP/.\+200 OK')
-  if [ "x${HTPT_OK}" = "x" ]; then echo 'assert_file_exists_on_s3 FAILED'; exit 1; fi
+  if [ "x${HTTP_OK}" = "x" ]; then echo 'assert_file_exists_on_s3 FAILED'; exit 1; fi
 }
 
 # assert restore successful
