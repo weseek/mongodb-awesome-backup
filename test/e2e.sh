@@ -18,7 +18,8 @@ assert_file_exists_on_s3() {
 
   ENDPOINT_URL=$1
   S3_FILE_PATH=$2
-  curl -I -L --silent "${ENDPOINT_URL}/${S3_FILE_PATH}" 2>&1 | grep -e '^HTTP/.\+200 OK'
+  HTTP_OK=$(curl -I -L --silent "${ENDPOINT_URL}/${S3_FILE_PATH}" 2>&1 | grep -e '^HTTP/.\+200 OK')
+  if [ "x${HTPT_OK}" = "x" ]; then echo 'FAILED'; exit 1; fi
 }
 
 # assert restore successful
