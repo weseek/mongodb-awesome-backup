@@ -18,7 +18,7 @@ assert_file_exists_on_s3() {
 
   ENDPOINT_URL=$1
   S3_FILE_PATH=$2
-  curl -I -L --silent "${ENDPOINT_URL}/${S3_FILE_PATH}" 2>&1 | grep -e '^HTTP/' | grep -q '200 OK'
+  curl -I -L --silent "${ENDPOINT_URL}/${S3_FILE_PATH}" 2>&1 | grep -e '^HTTP/.\+200 OK'
 }
 
 # Wait while container exist
