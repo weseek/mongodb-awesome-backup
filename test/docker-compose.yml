@@ -7,8 +7,6 @@ services:
     build:
       context: ../
       dockerfile: Dockerfile
-    env_file:
-      - .env
     environment:
       - S3_TARGET_BUCKET_URL=s3://app_default/
       - AWS_ACCESS_KEY_ID=testid
@@ -43,8 +41,9 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile.init_test
-    env_file:
-      - .env
+    environment:
+      - AWS_ACCESS_KEY_ID=testid
+      - AWS_SECRET_ACCESS_KEY=testkey
     entrypoint:
       "dockerize
        -wait tcp://s3proxy:80
