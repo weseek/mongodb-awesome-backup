@@ -36,7 +36,7 @@ wait_docker_container() {
 
   CONTAINER_NAME=$1
   SLEEP_TIMEOUT=30
-  while [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_${CONTAINER_NAME} | wc -l) -ne 1 ]; do
+  while [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_${CONTAINER_NAME}_ | wc -l) -ne 1 ]; do
     sleep 1
 
     SLEEP_TIMEOUT=$(expr ${SLEEP_TIMEOUT} - 1)
