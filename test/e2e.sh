@@ -32,10 +32,9 @@ assert_restore_successful () {
 #   ARGS
 #     $1 ... CONTAINER_NAME: container name
 wait_docker_container() {
-  if [ $# -ne 1 ]; then return 100; fi
+  if [ $# -ne 1 ]; then exit 100; fi
 
   CONTAINER_NAME=$1
-  CONTAINER_ID=$(docker ps -a -q -f name=/${COMPOSE_PROJECT_NAME}_${CONTAINER_NAME})
   SLEEP_TIMEOUT=30
   while [ $(docker ps -a -q -f status=exited -f name=/${COMPOSE_PROJECT_NAME}_${CONTAINER_NAME} | wc -l) -ne 1 ]; do
     sleep 1
