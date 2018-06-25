@@ -19,13 +19,13 @@ assert_file_exists_on_s3() {
   ENDPOINT_URL=$1
   S3_FILE_PATH=$2
   HTTP_OK=$(curl -I -L --silent "${ENDPOINT_URL}/${S3_FILE_PATH}" 2>&1 | grep -e '^HTTP/.\+200 OK')
-  if [ "x${HTPT_OK}" = "x" ]; then echo 'FAILED'; exit 1; fi
+  if [ "x${HTPT_OK}" = "x" ]; then echo 'assert_file_exists_on_s3 FAILED'; exit 1; fi
 }
 
 # assert restore successful
 assert_restore_successful () {
   DUMMY_RECORD_NUM=$(docker-compose exec mongo bash -c 'echo -e "use dummy;\n db.dummy.find({name: \"test\"})\n" | mongo | grep "ObjectId" | wc -l')
-  if [ "x${DUMMY_RECORD_NUM}" != "x1" ]; then echo 'FAILED'; exit 1; fi
+  if [ "x${DUMMY_RECORD_NUM}" != "x1" ]; then echo 'assert_restore_successful FAILED'; exit 1; fi
 }
 
 # Wait while container exist
@@ -82,7 +82,7 @@ echo 'Finished test for app_restore: OK'
 # Expect for app_backup_cronmode
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
-docker-compose stop -t 65 app_backup_cronmode
+docker-compose stop -t 65 "app_backup_cronmode"
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 assert_file_exists_on_s3 ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 echo 'Finished test for app_backup_cronmode: OK'
