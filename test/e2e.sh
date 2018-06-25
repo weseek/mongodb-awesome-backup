@@ -4,6 +4,13 @@
 # Settings
 S3_ENDPOINT_URL="http://localhost:10080"
 
+# handle exit and clean up containers
+handle_exit() {
+  docker-compose down -v
+}
+trap handle_exit EXIT
+trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
+
 # assert file exist on s3
 #   ARGS
 #     $1 ... ENDPOINT_URL: Endpoint URL of S3
