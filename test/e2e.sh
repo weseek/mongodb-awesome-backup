@@ -9,11 +9,11 @@
 S3_ENDPOINT_URL="http://localhost:10080"
 TEST_TARGET_IMAGE_TAG=${TEST_TARGET_IMAGE_TAG:-weseek/mongodb-awesome-backup}
 
-# Check a S3 file exist
+# assert file exist on s3
 #   ARGS
 #     $1 ... ENDPOINT_URL: Endpoint URL of S3
 #     $2 ... S3_FILE_PATH: File path of S3 to be checked for existence
-check_s3_file_exist() {
+assert_file_exists_on_s3() {
   if [ $# -ne 2 ]; then return 100; fi
 
   ENDPOINT_URL=$1
@@ -64,7 +64,7 @@ docker-compose up --build app_default app_backup_cronmode app_restore &
 # Expect for app_default
 wait_docker_container "app_default"
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
-check_s3_file_exist ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
+assert_file_exists_on_s3 ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
 echo 'Finished test for app_default: OK'
 
 # Expect for app_restore
@@ -79,7 +79,7 @@ echo 'Finished test for app_restore: OK'
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
 docker-compose stop -t 65 app_backup_cronmode
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
-check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
+assert_file_exists_on_s3 ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 echo 'Finished test for app_backup_cronmode: OK'
 
 # Clean up all containers
