@@ -53,10 +53,10 @@ TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 docker-compose down -v
 
 # Start s3proxy and mongodb
-docker-compose up --build init_s3proxy_and_mongo s3proxy mongo &
+docker-compose up --build init s3proxy mongo &
 
 # Sleep while s3 bucket is created
-wait_docker_container "init_s3proxy_and_mongo"
+wait_docker_container "init"
 
 # Execute test
 docker-compose up --build app_default app_backup_cronmode app_restore &
