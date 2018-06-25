@@ -40,19 +40,6 @@ wait_docker_container() {
   done
 }
 
-# Wait while container exist
-#   ARGS
-#     $1 ... CONTAINER_NAME: container name
-#     $2 ... DOCKER_STOP_OPT: options of docker stop
-stop_docker_container() {
-  if [ $# -le 1 ]; then return 100; fi
-
-  CONTAINER_NAME=$1
-  DOCKER_STOP_OPT=$2
-  CONTAINER_ID=$(docker ps -a -q -f name=/${COMPOSE_PROJECT_NAME}_${CONTAINER_NAME})
-  docker stop ${DOCKER_STOP_OPT} ${CONTAINER_ID}
-}
-
 # Start test script
 CWD=$(dirname $0)
 cd $CWD
@@ -90,7 +77,7 @@ echo 'Finished test for app_restore: OK'
 # Expect for app_backup_cronmode
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
-stop_docker_container "app_backup_cronmode" "-t 65"
+docker-compose stop -t 65 app_backup_cronmode
 ## should upload file `backup-#{TODAY}.tar.bz2` to S3
 check_s3_file_exist ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 echo 'Finished test for app_backup_cronmode: OK'
