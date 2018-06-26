@@ -5,6 +5,7 @@
 S3_ENDPOINT_URL="http://localhost:10080"
 
 # handle exit and clean up containers
+#   ref. https://fumiyas.github.io/2013/12/06/tempfile.sh-advent-calendar.html
 handle_exit() {
   docker-compose down -v
 }
