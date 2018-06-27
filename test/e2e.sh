@@ -42,7 +42,7 @@ docker-compose down -v
 
 # Start s3proxy and mongodb
 docker-compose up --build s3proxy mongo &
-sleep 3
+sleep 3 # wait for that network of docker-compose is ready
 docker-compose up --build init
 
 # Execute app_default
@@ -61,9 +61,10 @@ echo 'Finished test for app_restore: OK'
 
 # Expect for app_backup_cronmode
 docker-compose up --build app_backup_cronmode &
+sleep 3 # wait for that network of docker-compose is ready
 ## stop container
 ##   before stop, sleep 65s because test backup is executed every minute in cron mode
-docker-compose stop -t 65 "app_backup_cronmode"
+docker-compose stop -t 65 app_backup_cronmode
 # Expect for app_backup_cronmode
 assert_file_exists_on_s3 ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 # Exit test for app_restore
