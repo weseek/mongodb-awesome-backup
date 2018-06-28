@@ -1,0 +1,65 @@
+# This file would be executed from e2e.sh
+version: '3'
+
+services:
+  # test for backup in command mode
+  app_default: &app_default
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    environment: &base_env
+      AWS_ACCESS_KEY_ID: testid
+      AWS_SECRET_ACCESS_KEY: testkey
+      AWSCLIOPT: --endpoint-url=http://s3proxy:80/
+      S3_TARGET_BUCKET_URL: s3://app_default/
+
+  # test for backup in cron mode
+  app_backup_cronmode:
+    <<: *app_default
+    environment:
+      <<: *base_env
+      S3_TARGET_BUCKET_URL: s3://app_backup_cronmode/
+      CRONMODE: 'true'
+      CRON_EXPRESSION: '* * * * *'
+
+  # test for restore
+  app_restore:
+    <<: *app_default
+    environment:
+      <<: *base_env
+      S3_TARGET_BUCKET_URL: s3://app_restore/
+      S3_TARGET_FILE: dummy-backup-20180622.tar.bz2
+    command:
+      - restore
+
+  # backup target (empty)
+  mongo:
+    image: mongo:3.4
+    environment:
+      - TZ=Asia/Tokyo
+
+  # initialize S3 bucket for test
+  init:
+    build:
+      context: ./
+      dockerfile: Dockerfile.init_test
+    environment: *base_env
+    entrypoint:
+      "dockerize
+       -wait tcp://s3proxy:80
+       -wait tcp://mongo:27017
+       -timeout 60s /bin/bash -c
+        '/usr/bin/aws --endpoint-url=http://s3proxy:80/ s3 mb s3://app_default 
+         && /usr/bin/aws --endpoint-url=http://s3proxy:80/ s3 mb s3://app_backup_cronmode
+         && /usr/bin/aws --endpoint-url=http://s3proxy:80/ s3 mb s3://app_restore
+         && /usr/bin/aws --endpoint-url=http://s3proxy:80/ s3 cp /dummy-backup-20180622.tar.bz2 s3://app_restore/'"
+
+  # backup target (AWS S3 mock)
+  s3proxy:
+    image: andrewgaul/s3proxy:travis-1232
+    environment:
+      - S3PROXY_AUTHORIZATION=none
+    expose:
+      - 80
+    ports:
+      - 10080:80
