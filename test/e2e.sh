@@ -67,4 +67,7 @@ echo 'Finished test for app_backup_cronmode: OK'
 # Clean up all containers
 docker-compose down -v
 
+# Clear trap
+trap EXIT
+
 echo "***** ALL TESTS ARE SUCCESSFUL *****"
