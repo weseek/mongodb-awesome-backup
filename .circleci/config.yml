@@ -2,7 +2,12 @@ version: 2
 jobs:
   build:
     docker:
-      - image: docker:18.03.1-ce
+      - image: debian:jessie
+
+    environment:
+      DOCKER_VER: 17.03.0-ce
+      DOCKER_COMPOSE_VER: 1.11.2
+
     steps:
       - checkout
 
@@ -10,7 +15,18 @@ jobs:
       - run:
           name: Install packages
           command: |
-            apk update && apk add curl bash
+            apt-get update
+            apt-get install -y curl
+
+      # Install docker client
+      #   ref. https://github.com/CircleCI-Public/circleci-demo-docker/blob/docker-compose/.circleci/config.yml
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            curl -L -o /tmp/docker-${DOCKER_VER}.tgz https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VER}.tgz
+            tar -xz -C /tmp -f /tmp/docker-${DOCKER_VER}.tgz
+            mv /tmp/docker/* /usr/bin
 
       # Install docker-compose
       #   ref. https://github.com/CircleCI-Public/circleci-demo-docker/blob/docker-compose/.circleci/config.yml
@@ -18,7 +34,7 @@ jobs:
           name: Install Docker Compose
           command: |
             set -x
-            curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+            curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VER}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
             chmod +x /usr/local/bin/docker-compose
 
       # It is needed to activate the remote docker environment
