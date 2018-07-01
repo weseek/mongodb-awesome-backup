@@ -2,7 +2,8 @@
 # End to end test script
 
 # Settings
-S3_ENDPOINT_URL="http://localhost:10080"
+DOCKER_HOST=${DOCKER_HOST:-localhost}
+S3_ENDPOINT_URL="http://${DOCKER_HOST}:10080"
 
 # handle exit and clean up containers
 #   ref. https://fumiyas.github.io/2013/12/06/tempfile.sh-advent-calendar.html
