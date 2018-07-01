@@ -35,7 +35,7 @@ jobs:
       - run:
           name: Run integration tests
           command: |
-            set -ou pipefail
+            # set -ou pipefail
             # Notice this `set -o pipefail`, this will cause script to fail if `make test` fails
             # without this option script will return success regardless of testing result due to pipe after test command
             test/e2e.sh
