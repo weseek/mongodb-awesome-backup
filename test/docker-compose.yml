@@ -59,7 +59,3 @@ services:
     image: andrewgaul/s3proxy:travis-1232
     environment:
       - S3PROXY_AUTHORIZATION=none
-    expose:
-      - 80
-    ports:
-      - 10080:80
