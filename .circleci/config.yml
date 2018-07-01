@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: debian:jessie
+      - image: ubuntu:xenial
 
     environment:
       DOCKER_VER: 17.03.0-ce
