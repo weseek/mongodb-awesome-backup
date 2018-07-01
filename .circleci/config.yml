@@ -33,10 +33,6 @@ jobs:
             chmod +x /usr/local/bin/docker-compose
 
       - run:
-          name: Build service
-          command: make
-
-      - run:
           name: Run integration tests
           command: |
             set -ou pipefail
