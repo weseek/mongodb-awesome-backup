@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 # End to end test script
 
 # Settings
@@ -8,6 +8,7 @@ S3_ENDPOINT_URL="http://localhost:10080"
 #   ref. https://fumiyas.github.io/2013/12/06/tempfile.sh-advent-calendar.html
 handle_exit() {
   docker-compose down -v
+  exit 1
 }
 trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
@@ -17,12 +18,12 @@ trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
 #     $1 ... ENDPOINT_URL: Endpoint URL of S3
 #     $2 ... S3_FILE_PATH: File path of S3 to be checked for existence
 assert_file_exists_on_s3() {
-  if [ $# -ne 2 ]; then return 100; fi
+  if [ $# -ne 2 ]; then exit 1; fi
 
   ENDPOINT_URL=$1
   S3_FILE_PATH=$2
-  HTTP_OK=$(curl -I -L --silent "${ENDPOINT_URL}/${S3_FILE_PATH}" 2>&1 | grep -e '^HTTP/.\+200 OK')
-  if [ "x${HTTP_OK}" = "x" ]; then echo 'assert_file_exists_on_s3 FAILED'; exit 1; fi
+  HTTP_OK=$(curl -I -L --silent "${ENDPOINT_URL}/${S3_FILE_PATH}" 2>&1 | grep -q -e '^HTTP/.\+200 OK')
+  if [ $? -ne 0 ]; then echo 'assert_file_exists_on_s3 FAILED'; exit 1; fi
 }
 
 # assert restore is successful
