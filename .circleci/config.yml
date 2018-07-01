@@ -6,6 +6,12 @@ jobs:
     steps:
       - checkout
 
+      - run:
+          name: Install utility packages
+          command: |
+            apt-get update
+            apt-get install -y curl
+
       - setup_remote_docker
 
       # This should go into custom primary image, here's only for the sake of explanation
