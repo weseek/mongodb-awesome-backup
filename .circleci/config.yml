@@ -10,7 +10,7 @@ jobs:
       - run:
           name: Install packages
           command: |
-            apk update && apk add curl
+            apk update && apk add curl bash
 
       # Install docker-compose
       #   ref. https://github.com/CircleCI-Public/circleci-demo-docker/blob/docker-compose/.circleci/config.yml
