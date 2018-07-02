@@ -5,7 +5,6 @@ jobs:
       - image: ubuntu:bionic
 
     environment:
-      DOCKER_CE_VER: 18.03.1
       DOCKER_COMPOSE_VER: 1.21.2
 
     steps:
@@ -16,7 +15,11 @@ jobs:
           name: Install packages
           command: |
             apt-get update
-            apt-get install -y curl
+            apt-get install -y \
+              apt-transport-https \
+              ca-certificates \
+              curl \
+              software-properties-common
 
       # Install docker client
       #   ref. https://docs.docker.com/install/linux/docker-ce/ubuntu/
@@ -24,8 +27,13 @@ jobs:
           name: Install Docker client
           command: |
             set -x
-            curl -L -o /tmp/docker-${DOCKER_CE_VER}.tgz https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/docker-ce_${DOCKER_CE_VER}~ce~3-0~ubuntu_amd64.deb
-            dpkg -i /tmp/docker-${DOCKER_CE_VER}.tgz
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+            add-apt-repository \
+              "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+               $(lsb_release -cs) \
+               stable"
+            apt-get update
+            apt-get install -y docker-ce
 
       # Install docker-compose
       #   ref. https://docs.docker.com/compose/install/
