@@ -2,11 +2,11 @@ version: 2
 jobs:
   build:
     docker:
-      - image: ubuntu:xenial
+      - image: ubuntu:bionic
 
     environment:
-      DOCKER_VER: 17.03.0-ce
-      DOCKER_COMPOSE_VER: 1.11.2
+      DOCKER_VER: 18.03.1-ce
+      DOCKER_COMPOSE_VER: 1.21.2
 
     steps:
       - checkout
