@@ -5,7 +5,7 @@ jobs:
       - image: ubuntu:bionic
 
     environment:
-      DOCKER_VER: 18.03.1-ce
+      DOCKER_CE_VER: 18.03.1
       DOCKER_COMPOSE_VER: 1.21.2
 
     steps:
@@ -19,22 +19,21 @@ jobs:
             apt-get install -y curl
 
       # Install docker client
-      #   ref. https://github.com/CircleCI-Public/circleci-demo-docker/blob/docker-compose/.circleci/config.yml
+      #   ref. https://docs.docker.com/install/linux/docker-ce/ubuntu/
       - run:
           name: Install Docker client
           command: |
             set -x
-            curl -L -o /tmp/docker-${DOCKER_VER}.tgz https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VER}.tgz
-            tar -xz -C /tmp -f /tmp/docker-${DOCKER_VER}.tgz
-            mv /tmp/docker/* /usr/bin
+            curl -L -o /tmp/docker-${DOCKER_CE_VER}.tgz https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/docker-ce_${DOCKER_CE_VER}~ce~3-0~ubuntu_amd64.deb
+            dpkg -i /tmp/docker-${DOCKER_CE_VER}.tgz
 
       # Install docker-compose
-      #   ref. https://github.com/CircleCI-Public/circleci-demo-docker/blob/docker-compose/.circleci/config.yml
+      #   ref. https://docs.docker.com/compose/install/
       - run:
           name: Install Docker Compose
           command: |
             set -x
-            curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VER}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+            curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VER}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
             chmod +x /usr/local/bin/docker-compose
 
       # It is needed to activate the remote docker environment
