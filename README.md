@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/weseek/mongodb-awesome-backup/tree/master.svg?style=shield)](https://circleci.com/gh/weseek/mongodb-awesome-backup/tree/master)
+
 What is mongodb-awesome-backup?
 -------------------------------
 

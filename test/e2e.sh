@@ -1,28 +1,24 @@
-#!/bin/bash -e
+#!/bin/bash
 # End to end test script
-
-# Settings
-S3_ENDPOINT_URL="http://localhost:10080"
 
 # handle exit and clean up containers
 #   ref. https://fumiyas.github.io/2013/12/06/tempfile.sh-advent-calendar.html
 handle_exit() {
   docker-compose down -v
+  exit 1
 }
 trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
 
 # assert file exist on s3
 #   ARGS
-#     $1 ... ENDPOINT_URL: Endpoint URL of S3
-#     $2 ... S3_FILE_PATH: File path of S3 to be checked for existence
+#     $1 ... S3_FILE_PATH: File path of S3 to be checked for existence
 assert_file_exists_on_s3() {
-  if [ $# -ne 2 ]; then return 100; fi
+  if [ $# -ne 1 ]; then exit 1; fi
 
-  ENDPOINT_URL=$1
-  S3_FILE_PATH=$2
-  HTTP_OK=$(curl -I -L --silent "${ENDPOINT_URL}/${S3_FILE_PATH}" 2>&1 | grep -e '^HTTP/.\+200 OK')
-  if [ "x${HTTP_OK}" = "x" ]; then echo 'assert_file_exists_on_s3 FAILED'; exit 1; fi
+  S3_FILE_PATH=$1
+  docker-compose exec s3proxy sh -c "test -f /data/${S3_FILE_PATH}"
+  if [ $? -ne 0 ]; then echo 'assert_file_exists_on_s3 FAILED'; exit 1; fi
 }
 
 # assert restore is successful
@@ -48,7 +44,7 @@ docker-compose up --build init
 # Execute app_default
 docker-compose up --build app_default
 # Expect for app_default
-assert_file_exists_on_s3 ${S3_ENDPOINT_URL} "app_default/backup-${TODAY}.tar.bz2"
+assert_file_exists_on_s3 "app_default/backup-${TODAY}.tar.bz2"
 # Exit test for app_default
 echo 'Finished test for app_default: OK'
 
@@ -64,11 +60,14 @@ docker-compose up app_backup_cronmode &
 sleep 65 # wait for the network of docker-compose to be ready, and wait until test backup is executed at least once.
 docker-compose stop app_backup_cronmode
 # Expect for app_backup_cronmode
-assert_file_exists_on_s3 ${S3_ENDPOINT_URL} "app_backup_cronmode/backup-${TODAY}.tar.bz2"
+assert_file_exists_on_s3 "app_backup_cronmode/backup-${TODAY}.tar.bz2"
 # Exit test for app_restore
 echo 'Finished test for app_backup_cronmode: OK'
 
 # Clean up all containers
 docker-compose down -v
+
+# Clear trap
+trap EXIT
 
 echo "***** ALL TESTS ARE SUCCESSFUL *****"

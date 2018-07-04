@@ -1,0 +1,55 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: ubuntu:bionic
+
+    environment:
+      DOCKER_COMPOSE_VER: 1.21.2
+
+    steps:
+      - checkout
+
+      # Install some packages
+      - run:
+          name: Install packages
+          command: |
+            apt-get update
+            apt-get install -y \
+              apt-transport-https \
+              ca-certificates \
+              curl \
+              software-properties-common
+
+      # Install docker client
+      #   ref. https://docs.docker.com/install/linux/docker-ce/ubuntu/
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+            add-apt-repository \
+              "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+               $(lsb_release -cs) \
+               stable"
+            apt-get update
+            apt-get install -y docker-ce
+
+      # Install docker-compose
+      #   ref. https://docs.docker.com/compose/install/
+      - run:
+          name: Install Docker Compose
+          command: |
+            set -x
+            curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VER}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+
+      # It is needed to activate the remote docker environment
+      #   see. https://circleci.com/docs/2.0/docker-compose/
+      - setup_remote_docker
+
+      # Build and run integration test
+      - run:
+          name: Run integration tests
+          command: |
+            test/e2e.sh
