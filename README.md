@@ -12,6 +12,10 @@ Requirements
 * Amazon IAM Access Key ID/Secret Access Key
   * which must have the access lights of the target Amazon S3 bucket.
 
+OR
+
+* Google Cloud Interoperable storage access keys (see https://cloud.google.com/storage/docs/migrating#keys)
+
 Usage
 -----
 
@@ -19,7 +23,9 @@ Usage
 docker run --rm \
   -e AWS_ACCESS_KEY_ID=<Your IAM Access Key ID> \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
-  -e S3_TARGET_BUCKET_URL=<Target S3 Bucket URL (s3://...)> \
+  -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
+  -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
+  -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   [ -e BACKUPFILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
@@ -42,7 +48,9 @@ and after running this, `backup-YYYYMMdd.tar.bz2` will be placed on Target S3 Bu
 docker run --rm \
   -e AWS_ACCESS_KEY_ID=<Your IAM Access Key ID> \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
-  -e S3_TARGET_BUCKET_URL=<Target S3 Bucket URL (s3://...)> \
+  -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
+  -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
+  -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   -e CRONMODE=true \
   -e CRON_EXPRESSION=<Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)> \
   [ -e BACKUPFILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
@@ -62,7 +70,9 @@ You can use "**restore**" command to restore database from backup file.
 docker run --rm \
   -e AWS_ACCESS_KEY_ID=<Your IAM Access Key ID> \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
-  -e S3_TARGET_BUCKET_URL=<Target S3 Bucket URL (s3://...)> \
+  -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
+  -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
+  -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   -e S3_TARGET_FILE=<Target S3 file name to restore> \
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
@@ -81,11 +91,14 @@ Environment variables
 
 #### Required
 
+Note that either AWS or GCP key/secret pair is required not both.
 | Variable              | Description                                                           | Default |
 | --------------------- | --------------------------------------------------------------------- | ------- |
 | AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                |         |
 | AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                            |         |
-| S3_TARGET_BUCKET_URL  | Target S3 Bucket URL (s3://...). **URL is needed to be end with '/'** |         |
+| GCP_ACCESS_KEY_ID     | Your GCP Access Key                                                   |         |
+| GCP_SECRET_ACCESS_KEY | Your GCP Secret                                                       |         |
+| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'** |         |
 
 #### Optional
 
@@ -108,8 +121,10 @@ Environment variables
 | --------------------- | --------------------------------------------------------------------- | --- |
 | AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                |     |
 | AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                            |     |
-| S3_TARGET_BUCKET_URL  | Target S3 Bucket URL (s3://...). **URL is needed to be end with '/'** |     |
-| S3_TARGET_FILE        | Target S3 file name to restore                                        |     |
+| GCP_ACCESS_KEY_ID     | Your GCP Access Key                                                   |         |
+| GCP_SECRET_ACCESS_KEY | Your GCP Secret                                                       |         |
+| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'** |         |
+| TARGET_FILE           | Target S3 or GS file name to restore                                        |     |
 
 #### Optional
 
