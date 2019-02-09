@@ -3,12 +3,13 @@
 # settings
 BACKUPFILE_PREFIX=${BACKUPFILE_PREFIX:-backup}
 MONGODB_HOST=${MONGODB_HOST:-mongo}
+#MONGODB_HOST=
 #MONGODB_DBNAME=
 #MONGODB_USERNAME=
 #MONGODB_PASSWORD=
 #MONGODB_AUTHDB=
 #MONGODUMP_OPTS=
-#S3_TARGET_BUCKET_URL=s3://... (must be ended with /)
+#TARGET_BUCKET_URL=[s3://... | gs://...] (must be ended with /)
 
 # start script
 CWD=`/usr/bin/dirname $0`
@@ -32,10 +33,15 @@ TARBALL_FULLPATH="${TMPDIR}/${TARBALL}"
 
 
 # check parameters
-if [ "x${S3_TARGET_BUCKET_URL}" == "x" ]; then
-  echo "ERROR: The environment variable S3_TARGET_BUCKET_URL must be specified." 1>&2
+# deprecate the old option
+if [ "x${S3_TARGET_BUCKET_URL}" != "x" ]; then
+  TARGET_BUCKET_URL=$S3_TARGET_BUCKET_URL
+fi
+if [ "x${TARGET_BUCKET_URL}" == "x" ]; then
+  echo "ERROR: The environment variable TARGET_BUCKET_URL must be specified." 1>&2
   exit 1
 fi
+
 
 # dump database
 if [ "x${MONGODB_DBNAME}" != "x" ]; then
@@ -53,6 +59,11 @@ mongodump -h ${MONGODB_HOST} -o ${TARGET} ${MONGODUMP_OPTS}
 # run tar command
 echo "backup ${TARGET}..."
 time ${TAR_CMD} ${TAR_OPTS} ${TARBALL_FULLPATH} -C ${DIRNAME} ${BASENAME}
-# transfer tarball to Amazon S3
-s3_copy_file ${TARBALL_FULLPATH} ${S3_TARGET_BUCKET_URL}${TARBALL}
+
+if [ `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "s3" ]; then
+  # transfer tarball to Amazon S3
+  s3_copy_file ${TARBALL_FULLPATH} ${TARGET_BUCKET_URL}${TARBALL}
+elif [ `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "gs" ]; then
+  gs_copy_file ${TARBALL_FULLPATH} ${TARGET_BUCKET_URL}${TARBALL}
+fi
 

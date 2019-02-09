@@ -7,8 +7,13 @@ RUN apk add --no-cache \
     bash \
     tzdata \
     py2-pip \
-    mongodb-tools
+    mongodb-tools \
+    curl
+    
 RUN pip install awscli
+RUN curl https://storage.googleapis.com/pub/gsutil.tar.gz | tar xz -C $HOME
+RUN echo "export PATH=${PATH}:$HOME/gsutil" >> ~/.bashrc
+
 
 # set timezone JST
 RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
