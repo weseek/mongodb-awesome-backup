@@ -18,6 +18,7 @@ OR
 
 Usage
 -----
+Note that either AWS_ or GCP_ vars are required not both.
 
 ```bash
 docker run --rm \
@@ -93,8 +94,6 @@ Environment variables
 ### For `backup`, `prune`, `list`
 
 #### Required
-
-Note that either AWS or GCP key/secret pair is required not both.
 
 | Variable              | Description                                                           | Default |
 | --------------------- | --------------------------------------------------------------------- | ------- |
