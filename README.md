@@ -92,6 +92,7 @@ Environment variables
 #### Required
 
 Note that either AWS or GCP key/secret pair is required not both.
+
 | Variable              | Description                                                           | Default |
 | --------------------- | --------------------------------------------------------------------- | ------- |
 | AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                |         |
