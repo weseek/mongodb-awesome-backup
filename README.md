@@ -25,6 +25,7 @@ docker run --rm \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
   -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
   -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
+  -e GCP_PROJECT_ID=<Your GCP Project ID> \
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   [ -e BACKUPFILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
@@ -50,6 +51,7 @@ docker run --rm \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
   -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
   -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
+  -e GCP_PROJECT_ID=<Your GCP Project ID> \
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   -e CRONMODE=true \
   -e CRON_EXPRESSION=<Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)> \
@@ -72,6 +74,7 @@ docker run --rm \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
   -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
   -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
+  -e GCP_PROJECT_ID=<Your GCP Project ID> \
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   -e S3_TARGET_FILE=<Target S3 file name to restore> \
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
@@ -99,7 +102,8 @@ Note that either AWS or GCP key/secret pair is required not both.
 | AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                            |         |
 | GCP_ACCESS_KEY_ID     | Your GCP Access Key                                                   |         |
 | GCP_SECRET_ACCESS_KEY | Your GCP Secret                                                       |         |
-| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'** |         |
+| GCP_PROJECT_ID        | Your GCP Project ID                                                   |         |
+| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'**  |         |
 
 #### Optional
 
@@ -118,14 +122,15 @@ Note that either AWS or GCP key/secret pair is required not both.
 
 #### Required
 
-| Variable              | Description                                                           |     |
-| --------------------- | --------------------------------------------------------------------- | --- |
-| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                |     |
-| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                            |     |
-| GCP_ACCESS_KEY_ID     | Your GCP Access Key                                                   |         |
-| GCP_SECRET_ACCESS_KEY | Your GCP Secret                                                       |         |
-| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'** |         |
-| TARGET_FILE           | Target S3 or GS file name to restore                                        |     |
+| Variable              | Description                                                                         |     |
+| --------------------- | ----------------------------------------------------------------------------------- | --- |
+| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                              |     |
+| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                                          |     |
+| GCP_ACCESS_KEY_ID     | Your GCP Access Key                                                                 |     |
+| GCP_SECRET_ACCESS_KEY | Your GCP Secret                                                                     |     |
+| GCP_PROJECT_ID        | Your GCP Project ID                                                                 |     |
+| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'**      |     |
+| TARGET_FILE           | Target S3 or GS file name to restore                                                |     |
 
 #### Optional
 
