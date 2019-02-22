@@ -28,7 +28,7 @@ services:
     environment:
       <<: *base_env
       TARGET_BUCKET_URL: s3://app_restore/
-      S3_TARGET_FILE: dummy-backup-20180622.tar.bz2
+      TARGET_FILE: dummy-backup-20180622.tar.bz2
     command:
       - restore
 

@@ -77,7 +77,7 @@ docker run --rm \
   -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
   -e GCP_PROJECT_ID=<Your GCP Project ID> \
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
-  -e S3_TARGET_FILE=<Target S3 file name to restore> \
+  -e TARGET_FILE=<Target S3 or GS file name to restore> \
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
   [ -e MONGODB_USERNAME=<DB login username> \ ]

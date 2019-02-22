@@ -35,6 +35,7 @@ TARBALL_FULLPATH="${TMPDIR}/${TARBALL}"
 # check parameters
 # deprecate the old option
 if [ "x${S3_TARGET_BUCKET_URL}" != "x" ]; then
+  echo "WARNING: The environment variable S3_TARGET_BUCKET_URL is deprecated.  Please use TARGET_BUCKET_URL instead."
   TARGET_BUCKET_URL=$S3_TARGET_BUCKET_URL
 fi
 if [ "x${TARGET_BUCKET_URL}" == "x" ]; then
