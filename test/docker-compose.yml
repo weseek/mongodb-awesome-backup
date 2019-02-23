@@ -56,6 +56,6 @@ services:
 
   # backup target (AWS S3 mock)
   s3proxy:
-    image: andrewgaul/s3proxy:travis-1232
+    image: andrewgaul/s3proxy:list-v2
     environment:
       - S3PROXY_AUTHORIZATION=none
