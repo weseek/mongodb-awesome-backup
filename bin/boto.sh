@@ -28,6 +28,6 @@ HERE
 elif [ ! -f ${MOUNT}/.boto ]; then
   ${GCPCLI} config -o /mab/.boto
   cp ${MOUNT}/.boto /root/.boto
-else
+elif [ -f ${MOUNT}/.boto ]; then
   cp ${MOUNT}/.boto /root/.boto
 fi
