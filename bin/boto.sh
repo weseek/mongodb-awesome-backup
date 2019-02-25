@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -e
 if [ ! `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "gs" ]; then
 	exit 0
 fi
