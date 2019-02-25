@@ -24,9 +24,9 @@ Note that either AWS_ or GCP_ vars are required not both.
 docker run --rm \
   -e AWS_ACCESS_KEY_ID=<Your IAM Access Key ID> \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
-  -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
+  [ -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
   -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
-  -e GCP_PROJECT_ID=<Your GCP Project ID> \
+  -e GCP_PROJECT_ID=<Your GCP Project ID> ]\
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   [ -e BACKUPFILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
@@ -50,9 +50,9 @@ and after running this, `backup-YYYYMMdd.tar.bz2` will be placed on Target S3 Bu
 docker run --rm \
   -e AWS_ACCESS_KEY_ID=<Your IAM Access Key ID> \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
-  -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
+  [ -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
   -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
-  -e GCP_PROJECT_ID=<Your GCP Project ID> \
+  -e GCP_PROJECT_ID=<Your GCP Project ID> ]\
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   -e CRONMODE=true \
   -e CRON_EXPRESSION=<Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)> \
@@ -73,9 +73,9 @@ You can use "**restore**" command to restore database from backup file.
 docker run --rm \
   -e AWS_ACCESS_KEY_ID=<Your IAM Access Key ID> \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
-  -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
+  [ -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
   -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
-  -e GCP_PROJECT_ID=<Your GCP Project ID> \
+  -e GCP_PROJECT_ID=<Your GCP Project ID> ]\
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   -e TARGET_FILE=<Target S3 or GS file name to restore> \
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]

@@ -1,4 +1,8 @@
-#!/bin/bash -e
+#!/bin/bash -x
+GCPCLI="/root/gsutil/gsutil"
+MOUNT="/mab"
+
+if [ -z "${GCP_ACCESS_KEY_ID} ] || [ -z "${GCP_SECRET_ACCESS_KEY} ]; then
 cat <<- HERE > /root/.boto
 [Credentials]
 
@@ -21,3 +25,9 @@ default_project_id = $GCP_PROJECT_ID
 
 [OAuth2]
 HERE
+elif [ ! -f ${MOUNT}/.boto ]; then
+  ${GCPCLI} config -o /mab/.boto
+  cp ${MOUNT}/.boto /root/.boto
+else
+  cp ${MOUNT}/.boto /root/.boto
+fi
