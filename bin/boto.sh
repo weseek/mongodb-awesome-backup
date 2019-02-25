@@ -1,4 +1,8 @@
 #!/bin/bash -x
+if [ ! `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "gs" ]; then
+	exit 0
+fi
+
 GCPCLI="/root/gsutil/gsutil"
 MOUNT="/mab"
 
