@@ -15,6 +15,8 @@ Requirements
 OR
 
 * Google Cloud Interoperable storage access keys (see https://cloud.google.com/storage/docs/migrating#keys)
+  * GCP_ACCESS_KEY_ID, GCP_SECRET_ACCESS_KEY, and GCP_PROJECT_ID are only required if using HMAC authentication.
+  * When using oauth authentication, a docker mount ``` -v ~:/mab``` can be added to save auth0 credentials to your home directory after mongodb-awesome-backup is run.  On subsequent runs, the same ```~/.bota``` file will be used for authentication.
 
 Usage
 -----
@@ -26,14 +28,15 @@ docker run --rm \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
   [ -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
   -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
-  -e GCP_PROJECT_ID=<Your GCP Project ID> ]\
+  -e GCP_PROJECT_ID=<Your GCP Project ID> \ ]
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   [ -e BACKUPFILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
   [ -e MONGODB_USERNAME=<DB login username> \ ]
   [ -e MONGODB_PASSWORD=<DB login password> \ ]
-  [ -e MONGODB_AUTHDB=<Authentication DB name> \ ] 
+  [ -e MONGODB_AUTHDB=<Authentication DB name> \ ]
+  [ -v ~:/mab \ ]
   weseek/mongodb-awesome-backup
 ```
 
@@ -52,7 +55,7 @@ docker run --rm \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
   [ -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
   -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
-  -e GCP_PROJECT_ID=<Your GCP Project ID> ]\
+  -e GCP_PROJECT_ID=<Your GCP Project ID> \ ]
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   -e CRONMODE=true \
   -e CRON_EXPRESSION=<Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)> \
@@ -61,7 +64,8 @@ docker run --rm \
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
   [ -e MONGODB_USERNAME=<DB login username> \ ]
   [ -e MONGODB_PASSWORD=<DB login password> \ ]
-  [ -e MONGODB_AUTHDB=<Authentication DB name> \ ] 
+  [ -e MONGODB_AUTHDB=<Authentication DB name> \ ]
+  [ -v ~:/mab \ ]
   weseek/mongodb-awesome-backup
 ```
 
@@ -75,7 +79,7 @@ docker run --rm \
   -e AWS_SECRET_ACCESS_KEY=<Your IAM Secret Access Key> \
   [ -e GCP_ACCESS_KEY_ID=<Your GCP Access Key> \
   -e GCP_SECRET_ACCESS_KEY=<Your GCP Secret> \
-  -e GCP_PROJECT_ID=<Your GCP Project ID> ]\
+  -e GCP_PROJECT_ID=<Your GCP Project ID> \ ]
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   -e TARGET_FILE=<Target S3 or GS file name to restore> \
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
@@ -84,6 +88,7 @@ docker run --rm \
   [ -e MONGODB_PASSWORD=<DB login password> \ ]
   [ -e MONGODB_AUTHDB=<Authentication DB name> \ ] 
   [ -e MONGORESTORE_OPTS=<Options list of mongorestore> \ ]
+  [ -v ~:/mab \ ]
   weseek/mongodb-awesome-backup restore
 ```
 
@@ -99,15 +104,15 @@ Environment variables
 | --------------------- | --------------------------------------------------------------------- | ------- |
 | AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                |         |
 | AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                            |         |
-| GCP_ACCESS_KEY_ID     | Your GCP Access Key                                                   |         |
-| GCP_SECRET_ACCESS_KEY | Your GCP Secret                                                       |         |
-| GCP_PROJECT_ID        | Your GCP Project ID                                                   |         |
 | TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'**  |         |
 
 #### Optional
 
 | Variable          | Description                                                                                                                                                                   | Default |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| GCP_ACCESS_KEY_ID     | Your GCP Access Key                                                   |         |
+| GCP_SECRET_ACCESS_KEY | Your GCP Secret                                                       |         |
+| GCP_PROJECT_ID        | Your GCP Project ID                                                   |         |
 | BACKUPFILE_PREFIX | Prefix of Backup Filename                                                                                                                                                     | backup  |
 | MONGODB_HOST      | Target MongoDB Host                                                                                                                                                           | mongo   |
 | MONGODB_DBNAME    | Target DB name                                                                                                                                                                | -       |
@@ -125,9 +130,6 @@ Environment variables
 | --------------------- | ----------------------------------------------------------------------------------- | --- |
 | AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                              |     |
 | AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                                          |     |
-| GCP_ACCESS_KEY_ID     | Your GCP Access Key                                                                 |     |
-| GCP_SECRET_ACCESS_KEY | Your GCP Secret                                                                     |     |
-| GCP_PROJECT_ID        | Your GCP Project ID                                                                 |     |
 | TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'**      |     |
 | TARGET_FILE           | Target S3 or GS file name to restore                                                |     |
 
@@ -135,6 +137,9 @@ Environment variables
 
 | Variable          | Description                               | Default |
 | ----------------- | ----------------------------------------- | ------- |
+| GCP_ACCESS_KEY_ID     | Your GCP Access Key                                                                 |     |
+| GCP_SECRET_ACCESS_KEY | Your GCP Secret                                                                     |     |
+| GCP_PROJECT_ID        | Your GCP Project ID                                                                 |     |
 | MONGODB_HOST      | Target MongoDB Host                       | mongo   |
 | MONGODB_DBNAME    | Target DB name                            | -       |
 | MONGODB_USERNAME  | DB login username                         | -       |
