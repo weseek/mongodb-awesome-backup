@@ -16,7 +16,8 @@ OR
 
 * Google Cloud Interoperable storage access keys (see https://cloud.google.com/storage/docs/migrating#keys)
   * GCP_ACCESS_KEY_ID, GCP_SECRET_ACCESS_KEY, and GCP_PROJECT_ID are only required if using HMAC authentication.
-  * When using oauth authentication, a docker mount ` -v ~:/mab` can be added to save auth0 credentials to your home directory after mongodb-awesome-backup is run.  On subsequent runs, the same `~/.boto` file will be used for authentication.
+  * When using oauth authentication, a docker mount ` -v ~:/mab` and is the can be added to save auth0 credentials to your home directory after mongodb-awesome-backup is run.  On subsequent runs, the same `~/.boto` file will be used for authentication.
+  * The name 'mab' was chosen as the Docker container mount point simply because it's an acronym for "`m`ongodb-`a`wesome-`b`ackup").  The /mab mount point maps to the home directory of whatever user is used to run mongodb-awesome-backup, and is where the .boto file will be saved.
 
 Usage
 -----
