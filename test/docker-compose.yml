@@ -11,14 +11,14 @@ services:
       AWS_ACCESS_KEY_ID: testid
       AWS_SECRET_ACCESS_KEY: testkey
       AWSCLIOPT: --endpoint-url=http://s3proxy:80/
-      S3_TARGET_BUCKET_URL: s3://app_default/
+      TARGET_BUCKET_URL: s3://app_default/
 
   # test for backup in cron mode
   app_backup_cronmode:
     <<: *app_default
     environment:
       <<: *base_env
-      S3_TARGET_BUCKET_URL: s3://app_backup_cronmode/
+      TARGET_BUCKET_URL: s3://app_backup_cronmode/
       CRONMODE: 'true'
       CRON_EXPRESSION: '* * * * *'
 
@@ -27,8 +27,8 @@ services:
     <<: *app_default
     environment:
       <<: *base_env
-      S3_TARGET_BUCKET_URL: s3://app_restore/
-      S3_TARGET_FILE: dummy-backup-20180622.tar.bz2
+      TARGET_BUCKET_URL: s3://app_restore/
+      TARGET_FILE: dummy-backup-20180622.tar.bz2
     command:
       - restore
 

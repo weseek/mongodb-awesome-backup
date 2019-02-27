@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+./boto.sh
+
 # start script
 CRONMODE=${CRONMODE:-false}
 if $CRONMODE ; then

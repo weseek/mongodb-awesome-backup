@@ -2,7 +2,7 @@
 
 # settings
 MONGODB_HOST=${MONGODB_HOST:-mongo}
-S3_TARGET_FILE=${S3_TARGET_FILE}
+TARGET_FILE=${TARGET_FILE}
 MONGORESTORE_OPTS=${MONGORESTORE_OPTS:-}
 
 # start script
@@ -20,23 +20,27 @@ TAR_OPTS="jxvf"
 
 DIRNAME=`/usr/bin/dirname ${TARGET}`
 BASENAME=`/usr/bin/basename ${TARGET}`
-TARBALL_FULLPATH="${TMPDIR}/${S3_TARGET_FILE}"
+TARBALL_FULLPATH="${TMPDIR}/${TARGET_FILE}"
 
-S3_TARBALL_FULLURL=${S3_TARGET_BUCKET_URL}${S3_TARGET_FILE}
-
+S3_TARBALL_FULLURL=${TARGET_BUCKET_URL}${TARGET_FILE}
+GS_TARBALL_FULLURL=${TARGET_BUCKET_URL}${TARGET_FILE}
 
 # check parameters
-if [ "x${S3_TARGET_BUCKET_URL}" == "x" ]; then
-  echo "ERROR: The environment variable S3_TARGET_BUCKET_URL must be specified." 1>&2
+if [ "x${TARGET_BUCKET_URL}" == "x" ]; then
+  echo "ERROR: The environment variable TARGET_BUCKET_URL must be specified." 1>&2
   exit 1
 fi
-if [ "x${S3_TARGET_FILE}" == "x" ]; then
-  echo "ERROR: The environment variable S3_TARGET_FILE must be specified." 1>&2
+if [ "x${TARGET_FILE}" == "x" ]; then
+  echo "ERROR: The environment variable TARGET_FILE must be specified." 1>&2
   exit 1
 fi
 
-# download tarball from Amazon S3
-s3_copy_file ${S3_TARBALL_FULLURL} ${TARBALL_FULLPATH}
+if [ `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "s3" ]; then
+  # download tarball from Amazon S3
+  s3_copy_file ${S3_TARBALL_FULLURL} ${TARBALL_FULLPATH}
+elif [ `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "gs" ]; then
+  gs_copy_file ${GS_TARBALL_FULLURL} ${TARBALL_FULLPATH}
+fi
 
 # run tar command
 echo "expands ${TARGET}..."

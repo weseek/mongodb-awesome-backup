@@ -5,6 +5,12 @@ AWSCLI_LIST_OPT="s3 ls"
 AWSCLI_DEL_OPT="s3 rm"
 AWSCLIOPT=${AWSCLIOPT:-}
 
+GCPCLI="/root/gsutil/gsutil"
+GCPCLI_COPY_OPT="cp"
+GCPCLI_LIST_OPT="ls"
+GCPCLI_DEL_OPT="rm"
+GCPCLIOPT=${GCPCLIOPT:-}
+
 DATE_CMD="/bin/date"
 
 # Check the existence of specified file.
@@ -15,11 +21,18 @@ s3_exists() {
 	if [ $# -ne 1 ]; then return 255; fi
 	${AWSCLI} ${AWSCLIOPT} ${AWSCLI_LIST_OPT} $1 >/dev/null
 }
+gs_exists() {
+	if [ $# -ne 1 ]; then return 255; fi
+	${GCPCLI} ${GCPCLIOPT} ${GCPCLI_LIST_OPT} $1 >/dev/null
+}
 
 # Output the list of the files on specified S3 URL.
 # arguments: 1. s3 url (s3://...)
 s3_list_files() {
 	${AWSCLI} ${AWSCLIOPT} ${AWSCLI_LIST_OPT} $1
+}
+gs_list_files() {
+	${GCPCLI} ${GCPCLIOPT} ${GCPCLI_LIST_OPT} $1
 }
 
 # Delete the specified file.
@@ -27,6 +40,10 @@ s3_list_files() {
 s3_delete_file() {
 	if [ $# -ne 1 ]; then return 255; fi
 	${AWSCLI} ${AWSCLIOPT} ${AWSCLI_DEL_OPT} $1
+}
+gs_delete_file() {
+	if [ $# -ne 1 ]; then return 255; fi
+	${GCPCLI} ${GCPCLIOPT} ${GCPCLI_DEL_OPT} $1
 }
 
 # Copy the specified file.
@@ -41,6 +58,10 @@ s3_delete_file() {
 s3_copy_file() {
 	if [ $# -ne 2 ]; then return 255; fi
 	${AWSCLI} ${AWSCLIOPT} ${AWSCLI_COPY_OPT} $1 $2
+}
+gs_copy_file() {
+	if [ $# -ne 2 ]; then return 255; fi
+	${GCPCLI} ${GCPCLIOPT} ${GCPCLI_COPY_OPT} $1 $2
 }
 
 # Create today's date string(YYYYmmdd)
@@ -79,6 +100,17 @@ s3_delete_file_if_delete_backup_day() {
 			echo "DELETED past backuped file on S3: $1"
 		else
 			echo "not found past backuped file on S3: $1"
+		fi
+	fi
+}
+gs_delete_file_if_delete_backup_day() {
+	if [ $# -ne 3 ]; then return 255; fi
+	if check_is_delete_backup_day $2 $3; then
+		if gs_exists $1; then
+			gs_delete_file $1
+			echo "DELETED past backuped file on GS: $1"
+		else
+			echo "not found past backuped file on GS: $1"
 		fi
 	fi
 }
