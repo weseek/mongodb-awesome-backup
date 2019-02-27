@@ -52,8 +52,14 @@ jobs:
       #   see. https://circleci.com/docs/2.0/docker-compose/
       - setup_remote_docker
 
+      # For DEBUG
+      - run:
+          name: Display timezone
+          command: |
+            timedatectl
+
       # Build and run integration test
       - run:
           name: Run integration tests
           command: |
-            TZ=$TZ test/e2e.sh
+            test/e2e.sh
