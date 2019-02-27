@@ -23,7 +23,8 @@ jobs:
               apt-transport-https \
               ca-certificates \
               curl \
-              software-properties-common
+              software-properties-common \
+              tzdata
 
       # Install docker client
       #   ref. https://docs.docker.com/install/linux/docker-ce/ubuntu/
@@ -48,13 +49,27 @@ jobs:
             curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VER}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
             chmod +x /usr/local/bin/docker-compose
 
+      - run:
+          name: set timezone to Asia/Tokyo
+          command: |
+            cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
+      # For DEBUG
+      - run:
+          name: Display info
+          command: |
+            uname -a
+            cat /etc/*release
+            cat /etc/*version
+            #timedatectl
+
       # It is needed to activate the remote docker environment
       #   see. https://circleci.com/docs/2.0/docker-compose/
       - setup_remote_docker
 
       # For DEBUG
       - run:
-          name: Display timezone
+          name: Display info
           command: |
             uname -a
             cat /etc/*release
