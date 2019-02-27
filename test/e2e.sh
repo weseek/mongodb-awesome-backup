@@ -39,6 +39,8 @@ cd $CWD
 
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 
+echo "=== $0 started at `/bin/date "+%Y/%m/%d %H:%M:%S"` ==="
+
 # Clean up before start s3proxy and mongodb
 docker-compose down -v
 

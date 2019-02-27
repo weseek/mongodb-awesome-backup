@@ -9,6 +9,7 @@ jobs:
 
     environment:
       DOCKER_COMPOSE_VER: 1.21.2
+      TZ: "Asia/Tokyo"
 
     steps:
       - checkout
