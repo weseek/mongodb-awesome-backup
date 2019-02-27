@@ -56,7 +56,10 @@ jobs:
       - run:
           name: Display timezone
           command: |
-            timedatectl
+            uname -a
+            cat /etc/*release
+            cat /etc/*version
+            #timedatectl
 
       # Build and run integration test
       - run:
