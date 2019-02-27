@@ -3,10 +3,12 @@ jobs:
   build:
     docker:
       - image: ubuntu:bionic
+        # Match with the time zone of the mongodb-awesome-backup container.
+        environment:
+          TZ: "Asia/Tokyo"
 
     environment:
       DOCKER_COMPOSE_VER: 1.21.2
-      TZ: "Asia/Tokyo"
 
     steps:
       - checkout
