@@ -2,8 +2,8 @@ version: 2
 jobs:
   build:
     docker:
+      # Match with the time zone of the mongodb-awesome-backup container.
       - image: ubuntu:bionic
-        # Match with the time zone of the mongodb-awesome-backup container.
         environment:
           TZ: "Asia/Tokyo"
 
@@ -51,11 +51,6 @@ jobs:
       # It is needed to activate the remote docker environment
       #   see. https://circleci.com/docs/2.0/docker-compose/
       - setup_remote_docker
-
-      # Match with the time zone of the mongodb-awesome-backup container.
-      - run:
-          name: Set timezone to Asia/Tokyo
-          command: cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
       # Build and run integration test
       - run:
