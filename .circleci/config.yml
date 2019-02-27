@@ -52,6 +52,11 @@ jobs:
       #   see. https://circleci.com/docs/2.0/docker-compose/
       - setup_remote_docker
 
+      # Match with the time zone of the mongodb-awesome-backup container.
+      - run:
+          name: Set timezone to Asia/Tokyo
+          command: cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
       # Build and run integration test
       - run:
           name: Run integration tests
