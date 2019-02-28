@@ -6,6 +6,8 @@ jobs:
 
     environment:
       DOCKER_COMPOSE_VER: 1.21.2
+      # Disable interactive mode when running apt
+      DEBIAN_FRONTEND: noninteractive
 
     steps:
       - checkout
@@ -19,7 +21,8 @@ jobs:
               apt-transport-https \
               ca-certificates \
               curl \
-              software-properties-common
+              software-properties-common \
+              tzdata
 
       # Install docker client
       #   ref. https://docs.docker.com/install/linux/docker-ce/ubuntu/
@@ -43,6 +46,12 @@ jobs:
             set -x
             curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VER}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
             chmod +x /usr/local/bin/docker-compose
+
+      # Match with the time zone of the mongodb-awesome-backup container.
+      - run:
+          name: set timezone to Asia/Tokyo
+          command: |
+            cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
       # It is needed to activate the remote docker environment
       #   see. https://circleci.com/docs/2.0/docker-compose/

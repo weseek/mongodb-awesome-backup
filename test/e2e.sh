@@ -18,7 +18,13 @@ assert_file_exists_on_s3() {
 
   S3_FILE_PATH=$1
   docker-compose exec s3proxy sh -c "test -f /data/${S3_FILE_PATH}"
-  if [ $? -ne 0 ]; then echo 'assert_file_exists_on_s3 FAILED'; exit 1; fi
+  if [ $? -ne 0 ]; then
+    echo "assert_file_exists_on_s3 FAILED";
+    echo "could not be found /data/${S3_FILE_PATH} in s3proxy.";
+    echo "list of files under /data/"
+    docker-compose exec s3proxy sh -c "ls -alR /data/"
+    exit 1;
+  fi
 }
 
 # assert restore is successful
@@ -32,6 +38,8 @@ CWD=$(dirname $0)
 cd $CWD
 
 TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
+
+echo "=== $0 started at `/bin/date "+%Y/%m/%d %H:%M:%S"` ==="
 
 # Clean up before start s3proxy and mongodb
 docker-compose down -v
