@@ -6,7 +6,7 @@ jobs:
 
     environment:
       DOCKER_COMPOSE_VER: 1.21.2
-      # Next variable is needed to avoid to enter intaractive mode when install tzdata
+      # Disable interactive mode when running apt
       DEBIAN_FRONTEND: noninteractive
 
     steps:
