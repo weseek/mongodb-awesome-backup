@@ -3,7 +3,7 @@
 What is mongodb-awesome-backup?
 -------------------------------
 
-mongodb-awesome-backup is the collection of scripts which backup MongoDB databases to Amazon S3.
+mongodb-awesome-backup is the collection of scripts which backup MongoDB databases to Amazon S3 or Google Cloud Storage.
 
 
 Requirements
