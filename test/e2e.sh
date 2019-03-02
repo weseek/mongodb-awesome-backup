@@ -57,14 +57,14 @@ assert_file_exists_on_s3 "app_default/backup-${TODAY}.tar.bz2"
 echo 'Finished test for app_default: OK'
 
 # Expect for app_restore
-docker-compose up app_restore
+docker-compose up --build app_restore
 # Expect for app_restore
 assert_dummy_record_exists_on_mongodb
 # Exit test for app_restore
 echo 'Finished test for app_restore: OK'
 
 # Expect for app_backup_cronmode
-docker-compose up app_backup_cronmode &
+docker-compose up --build app_backup_cronmode &
 sleep 65 # wait for the network of docker-compose to be ready, and wait until test backup is executed at least once.
 docker-compose stop app_backup_cronmode
 # Expect for app_backup_cronmode
