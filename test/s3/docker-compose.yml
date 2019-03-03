@@ -5,7 +5,7 @@ services:
   # test for backup in command mode
   app_default: &app_default
     build:
-      context: ../
+      context: ../../
       dockerfile: Dockerfile
     environment: &base_env
       AWS_ACCESS_KEY_ID: testid
