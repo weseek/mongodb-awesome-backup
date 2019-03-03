@@ -61,4 +61,4 @@ jobs:
       - run:
           name: Run integration tests
           command: |
-            test/e2e.sh
+            test/all.sh
