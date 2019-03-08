@@ -1,4 +1,6 @@
 #!/bin/bash
 
-cd s3 && . e2e.sh && cd ..
-cd gcs && . e2e.sh && cd ..
+CWD=$(dirname $0)
+
+"$CWD/s3/e2e.sh"
+"$CWD/gcs/e2e.sh"
