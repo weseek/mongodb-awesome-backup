@@ -35,7 +35,7 @@ services:
   app_with_dot_boto: &app_with_dot_boto
     <<: *app_default
     volumes:
-      - $PWD/conf/.boto_oauth:/mab/.boto
+      - ./conf/.boto_oauth:/mab/.boto
     environment: &with_boto_env
       <<: *base_env
       GCP_ACCESS_KEY_ID: ""
@@ -68,7 +68,7 @@ services:
     environment:
       <<: *base_env
     volumes:
-      - $PWD/conf/.boto_hmac:/tmp/.boto
+      - ./conf/.boto_hmac:/tmp/.boto
     entrypoint:
       "dockerize
        -wait tcp://mongo:27017
