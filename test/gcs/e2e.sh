@@ -53,8 +53,8 @@ start_mongo_service_and_init_service () {
 
     # Copy boto file to container volume
     SERVICES_WITH_BOTO=("app_with_dot_boto" "app_backup_cronmode_with_dot_boto" "app_restore_with_dot_boto")
-    for ((i = 0; i < ${#SERVICES_WITH_BOTO[@]}; i++)) {
-      SERVICE_NAME=${SERVICES_WITH_BOTO[i]}
+    for ((j = 0; j < ${#SERVICES_WITH_BOTO[@]}; j++)) {
+      SERVICE_NAME=${SERVICES_WITH_BOTO[j]}
 
       docker-compose up --build --no-start $SERVICE_NAME
       CID=$(docker-compose ps -q $SERVICE_NAME)
