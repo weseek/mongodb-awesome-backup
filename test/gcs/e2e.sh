@@ -62,6 +62,7 @@ for ((i = 0; i < ${#REQUIRED_ENVS[@]}; i++)) {
 if [ $SATISFY -ne 1 ]; then trap EXIT; exit 1; fi
 
 # Override config file for GCS test
+ls -alR
 if [ ! -f 'conf/.boto_oauth' ]; then
   echo -e "$DOT_BOTO_OAUTH" > 'conf/.boto_oauth'
 fi
