@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # End to end test script in case of storing to GCS
 
 # Handle exit and clean up containers
@@ -35,6 +35,34 @@ assert_dummy_record_exists_on_mongodb () {
 
 # Start mongo service and init services
 start_mongo_service_and_init_service () {
+  if [ $# -eq 1 ]; then
+    INIT_BOTO=$1
+  fi
+
+  # Initialize .boto config
+  docker-compose up --build --no-start init
+  DATASTORE_CID=$(docker-compose ps -q init)
+  DATASTORE_CNAME=$(docker ps -a -f id=${DATASTORE_CID} --format {{.Names}})
+  docker cp conf/.boto_hmac "${DATASTORE_CNAME}:/tmp/.boto"
+
+  if [ -n "$INIT_BOTO" ]; then
+    # Config file for GCS test
+    if [ ! -f 'conf/.boto_oauth' ]; then
+      echo -e "$DOT_BOTO_OAUTH" > 'conf/.boto_oauth'
+    fi
+
+    # Copy boto file to container volume
+    SERVICES_WITH_BOTO=("app_with_dot_boto" "app_backup_cronmode_with_dot_boto" "app_restore_with_dot_boto")
+    for ((i = 0; i < ${#SERVICES_WITH_BOTO[@]}; i++)) {
+      SERVICE_NAME=${SERVICES_WITH_BOTO[i]}
+
+      docker-compose up --build --no-start $SERVICE_NAME
+      CID=$(docker-compose ps -q $SERVICE_NAME)
+      CNAME=$(docker ps -a -f id=${CID} --format {{.Names}})
+      docker cp conf/.boto_oauth "${CNAME}:/mab/.boto"
+    }
+  fi
+
   # Start mongodb
   docker-compose up --build mongo &
   sleep 3 # wait for the network of docker-compose to be ready
@@ -61,23 +89,14 @@ for ((i = 0; i < ${#REQUIRED_ENVS[@]}; i++)) {
 }
 if [ $SATISFY -ne 1 ]; then trap EXIT; exit 1; fi
 
-# Override config file for GCS test
-ls -alR
-echo "before DOT_BOTO_OAUTH"
-echo "$DOT_BOTO_OAUTH"
-if [ ! -f 'conf/.boto_oauth' ]; then
-  echo -e "$DOT_BOTO_OAUTH" > 'conf/.boto_oauth'
-fi
-echo "after DOT_BOTO_OAUTH"
-ls -alR
-
 # Clean up bucket before start mongodb
 docker-compose down -v
 
 # Test default commands with HMAC/OAuth authentications
 TEST_SERVICES=("app_default" "app_with_dot_boto")
+WITH_BOTO=("" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  start_mongo_service_and_init_service
+  start_mongo_service_and_init_service ${WITH_BOTO[i]}
 
   SERVICE_NAME=${TEST_SERVICES[i]}
 
@@ -94,8 +113,9 @@ for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
 
 # Test default commands in cron mode with HMAC/OAuth authentications
 TEST_SERVICES=("app_backup_cronmode" "app_backup_cronmode_with_dot_boto")
+WITH_BOTO=("" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  start_mongo_service_and_init_service
+  start_mongo_service_and_init_service ${WITH_BOTO[i]}
 
   SERVICE_NAME=${TEST_SERVICES[i]}
 
@@ -114,8 +134,9 @@ for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
 
 # Test restore command with HMAC/OAuth authentications
 TEST_SERVICES=("app_restore" "app_restore_with_dot_boto")
+WITH_BOTO=("" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  start_mongo_service_and_init_service
+  start_mongo_service_and_init_service ${WITH_BOTO[i]}
 
   SERVICE_NAME=${TEST_SERVICES[i]}
 
