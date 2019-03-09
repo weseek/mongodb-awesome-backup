@@ -63,9 +63,13 @@ if [ $SATISFY -ne 1 ]; then trap EXIT; exit 1; fi
 
 # Override config file for GCS test
 ls -alR
+echo "before DOT_BOTO_OAUTH"
+echo "$DOT_BOTO_OAUTH"
 if [ ! -f 'conf/.boto_oauth' ]; then
   echo -e "$DOT_BOTO_OAUTH" > 'conf/.boto_oauth'
 fi
+echo "after DOT_BOTO_OAUTH"
+ls -alR
 
 # Clean up bucket before start mongodb
 docker-compose down -v
