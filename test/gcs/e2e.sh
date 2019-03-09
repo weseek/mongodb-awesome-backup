@@ -1,7 +1,7 @@
 #!/bin/bash
-# End to end test script
+# End to end test script in case of storing to GCS
 
-# handle exit and clean up containers
+# Handle exit and clean up containers
 #   ref. https://fumiyas.github.io/2013/12/06/tempfile.sh-advent-calendar.html
 handle_exit() {
   docker-compose down -v
@@ -10,7 +10,7 @@ handle_exit() {
 trap handle_exit EXIT
 trap 'rc=$?; trap - EXIT; handle_exit; exit $?' INT PIPE TERM
 
-# assert file exist on GCS
+# Assert file exist on GCS
 #   ARGS
 #     $1 ... GCS_FILE_PATH: File path of S3 to be checked for existence
 assert_file_exists_on_gcs() {
@@ -27,14 +27,14 @@ assert_file_exists_on_gcs() {
   fi
 }
 
-# assert restore is successful
+# Assert restore is successful
 assert_dummy_record_exists_on_mongodb () {
   docker-compose exec mongo bash -c 'echo -e "use dummy;\n db.dummy.find({name: \"test\"})\n" | mongo | grep -q "ObjectId"'
   if [ $? -ne 0 ]; then echo 'assert_restore_dummy_record FAILED'; exit 1; fi
 }
 
-# prepare docker-compose services
-prepare_docker_compose_services () {
+# Start mongo service and init services
+start_mongo_service_and_init_service () {
   # Start mongodb
   docker-compose up --build mongo &
   sleep 3 # wait for the network of docker-compose to be ready
@@ -64,50 +64,61 @@ if [ $SATISFY -ne 1 ]; then trap EXIT; exit 1; fi
 # Clean up bucket before start mongodb
 docker-compose down -v
 
-TEST_APPS=("app_default" "app_with_dot_boto")
-for ((i = 0; i < ${#TEST_APPS[@]}; i++)) {
-  prepare_docker_compose_services
+# Test default commands with HMAC/OAuth authentications
+TEST_SERVICES=("app_default" "app_with_dot_boto")
+for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
+  start_mongo_service_and_init_service
 
-  APP_NAME=${TEST_APPS[i]}
+  SERVICE_NAME=${TEST_SERVICES[i]}
 
   # Execute app
-  docker-compose up --build $APP_NAME
+  docker-compose up --build $SERVICE_NAME
   # Expect for app
   assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
   # Exit test for app
-  echo "Finished test for $APP_NAME: OK"
+  echo "Finished test for $SERVICE_NAME: OK"
 
   # Clean up all containers
   docker-compose down -v
 }
 
-TEST_APPS=("app_backup_cronmode")
-for ((i = 0; i < ${#TEST_APPS[@]}; i++)) {
-  prepare_docker_compose_services
+# Test default commands in cron mode with HMAC/OAuth authentications
+TEST_SERVICES=("app_backup_cronmode" "app_backup_cronmode_with_dot_boto")
+for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
+  start_mongo_service_and_init_service
 
-  APP_NAME=${TEST_APPS[i]}
+  SERVICE_NAME=${TEST_SERVICES[i]}
 
   # Execute app in cron mode
-  docker-compose up --build $APP_NAME &
+  docker-compose up --build $SERVICE_NAME &
   sleep 65 # wait for the network of docker-compose to be ready, and wait until test backup is executed at least once.
-  docker-compose stop $APP_NAME
+  docker-compose stop $SERVICE_NAME
   # Expect for app_backup_cronmode
   assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
   # Exit test for app_restore
-  echo "Finished test for $APP_NAME: OK"
+  echo "Finished test for $SERVICE_NAME: OK"
+
+  # Clean up all containers
+  docker-compose down -v
 }
 
-prepare_docker_compose_services
+# Test restore command with HMAC/OAuth authentications
+TEST_SERVICES=("app_restore" "app_restore_with_dot_boto")
+for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
+  start_mongo_service_and_init_service
 
-# Expect for app_restore
-docker-compose up --build app_restore
-# Expect for app_restore
-assert_dummy_record_exists_on_mongodb
-# Exit test for app_restore
-echo 'Finished test for app_restore: OK'
+  SERVICE_NAME=${TEST_SERVICES[i]}
 
-# Clean up all containers
-docker-compose down -v
+  # Expect for app_restore
+  docker-compose up --build $SERVICE_NAME
+  # Expect for app_restore
+  assert_dummy_record_exists_on_mongodb
+  # Exit test for app_restore
+  echo "Finished test for $SERVICE_NAME: OK"
+
+  # Clean up all containers
+  docker-compose down -v
+}
 
 # Clear trap
 trap EXIT

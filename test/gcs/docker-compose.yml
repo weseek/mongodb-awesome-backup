@@ -13,16 +13,6 @@ services:
       GCP_PROJECT_ID: $GCP_PROJECT_ID
       TARGET_BUCKET_URL: $TARGET_BUCKET_URL
 
-  # test for backup in command mode with .boto file
-  app_with_dot_boto:
-    <<: *app_default
-    volumes:
-      - $PWD/conf/.boto_oauth:/mab/.boto
-    environment:
-      <<: *base_env
-      GCP_ACCESS_KEY_ID: ""
-      GCP_SECRET_ACCESS_KEY: ""
-
   # test for backup in cron mode
   app_backup_cronmode:
     <<: *app_default
@@ -36,6 +26,34 @@ services:
     <<: *app_default
     environment:
       <<: *base_env
+      TARGET_BUCKET_URL: $TARGET_BUCKET_URL
+      TARGET_FILE: dummy-backup-20180622.tar.bz2
+    command:
+      - restore
+
+  # test for backup in command mode with .boto file
+  app_with_dot_boto: &app_with_dot_boto
+    <<: *app_default
+    volumes:
+      - $PWD/conf/.boto_oauth:/mab/.boto
+    environment: &with_boto_env
+      <<: *base_env
+      GCP_ACCESS_KEY_ID: ""
+      GCP_SECRET_ACCESS_KEY: ""
+
+  # test for backup in cron mode with .boto file
+  app_backup_cronmode_with_dot_boto:
+    <<: *app_with_dot_boto
+    environment:
+      <<: *with_boto_env
+      CRONMODE: 'true'
+      CRON_EXPRESSION: '* * * * *'
+
+  # test for restore with .boto file
+  app_restore_with_dot_boto:
+    <<: *app_with_dot_boto
+    environment:
+      <<: *with_boto_env
       TARGET_BUCKET_URL: $TARGET_BUCKET_URL
       TARGET_FILE: dummy-backup-20180622.tar.bz2
     command:
