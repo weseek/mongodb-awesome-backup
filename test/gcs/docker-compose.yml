@@ -68,7 +68,7 @@ services:
     environment:
       <<: *base_env
     volumes:
-      - ./conf/.boto_hmac:/mab/.boto
+      - $PWD/conf/.boto_hmac:/mab/.boto
     entrypoint:
       "dockerize
        -wait tcp://mongo:27017
