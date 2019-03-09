@@ -38,13 +38,17 @@ services:
       context: ./
       dockerfile: Dockerfile.init_test
       args: *base_env
-    # volumes:
-    #   - $PWD/mab/.boto:/mab/.boto
+    environment:
+      <<: *base_env
+    volumes:
+      - $PWD/mab/.boto:/mab/.boto
     entrypoint:
       "dockerize
        -wait tcp://mongo:27017
        -timeout 60s /bin/bash -c
-        'gsutil rm -rf ${TARGET_BUCKET_URL}
+        'while read line; do eval echo $$line; done < /mab/.boto > /root/.boto
+        && gsutil ls ${TARGET_BUCKET_URL}
+        && gsutil rm -rf ${TARGET_BUCKET_URL}
         && gsutil cp dummy-backup-20180622.tar.bz2 ${TARGET_BUCKET_URL}'"
 
   # backup target (empty)

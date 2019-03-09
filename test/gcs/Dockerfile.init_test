@@ -17,10 +17,5 @@ RUN curl -SL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_V
 # dummy backup data for restore
 COPY dummy-backup-20180622.tar.bz2 /
 
-COPY mab/.boto /mab/.boto
-ARG GCP_ACCESS_KEY_ID
-ARG GCP_SECRET_ACCESS_KEY
-RUN while read line; do eval echo $line; done < /mab/.boto > /root/.boto
-
 # set timezone JST
 RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
