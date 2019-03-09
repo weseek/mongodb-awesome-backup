@@ -68,13 +68,13 @@ services:
     environment:
       <<: *base_env
     volumes:
-      - $PWD/conf/.boto_hmac:/tmp/.boto
+      - ./conf/.boto_hmac:/mab/.boto
     entrypoint:
       "dockerize
        -wait tcp://mongo:27017
        -timeout 60s /bin/bash -c
         'ls -alR /tmp
-        && while read line; do eval echo $$line; done < /tmp/.boto > /root/.boto
+        && while read line; do eval echo $$line; done < /mab/.boto > /root/.boto
         && gsutil ls ${TARGET_BUCKET_URL}
         && gsutil rm -rf ${TARGET_BUCKET_URL}
         && gsutil cp dummy-backup-20180622.tar.bz2 ${TARGET_BUCKET_URL}'"
