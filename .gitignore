@@ -1,2 +1,5 @@
 # for Docker
 /.env
+
+# for e2e test
+/test/gcs/conf/.boto_oauth

@@ -50,7 +50,7 @@ TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 echo "=== $0 started at `/bin/date "+%Y/%m/%d %H:%M:%S"` ==="
 
 # Validate environment variables
-REQUIRED_ENVS=("GCP_ACCESS_KEY_ID" "GCP_SECRET_ACCESS_KEY" "GCP_PROJECT_ID" "TARGET_BUCKET_URL")
+REQUIRED_ENVS=("GCP_ACCESS_KEY_ID" "GCP_SECRET_ACCESS_KEY" "GCP_PROJECT_ID" "TARGET_BUCKET_URL" "DOT_BOTO_OAUTH")
 SATISFY=1
 for ((i = 0; i < ${#REQUIRED_ENVS[@]}; i++)) {
   ENV=$(eval echo "\$${REQUIRED_ENVS[i]}")
@@ -60,6 +60,9 @@ for ((i = 0; i < ${#REQUIRED_ENVS[@]}; i++)) {
   fi
 }
 if [ $SATISFY -ne 1 ]; then trap EXIT; exit 1; fi
+
+# Override config file for GCS test
+echo -e $DOT_BOTO_OAUTH > conf/.boto_oauth
 
 # Clean up bucket before start mongodb
 docker-compose down -v
