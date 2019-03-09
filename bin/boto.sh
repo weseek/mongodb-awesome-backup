@@ -6,7 +6,7 @@ fi
 GCPCLI="/root/gsutil/gsutil"
 MOUNT="/mab"
 
-if [ -n "${GCP_ACCESS_KEY_ID} ] || [ -n "${GCP_SECRET_ACCESS_KEY} ]; then
+if [ -n "${GCP_ACCESS_KEY_ID}" ] || [ -n "${GCP_SECRET_ACCESS_KEY}" ]; then
 cat <<- HERE > /root/.boto
 [Credentials]
 
