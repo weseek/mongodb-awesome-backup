@@ -11,6 +11,12 @@ jobs:
 
     steps:
       - checkout
+      
+      # Override config file for GCS test
+      - run:
+          name: Override config file for GCS test
+          command: |
+            echo -e $DOT_BOTO_OAUTH > test/gcs/conf/.boto_oauth
 
       # Install some packages
       - run:
