@@ -73,7 +73,7 @@ services:
       "dockerize
        -wait tcp://mongo:27017
        -timeout 60s /bin/bash -c
-        'ls -alR /tmp
+        'ls -alR /mab
         && while read line; do eval echo $$line; done < /mab/.boto > /root/.boto
         && gsutil ls ${TARGET_BUCKET_URL}
         && gsutil rm -rf ${TARGET_BUCKET_URL}
