@@ -73,7 +73,8 @@ services:
       "dockerize
        -wait tcp://mongo:27017
        -timeout 60s /bin/bash -c
-        'while read line; do eval echo $$line; done < /tmp/.boto > /root/.boto
+        'ls -alR /tmp
+        && while read line; do eval echo $$line; done < /tmp/.boto > /root/.boto
         && gsutil ls ${TARGET_BUCKET_URL}
         && gsutil rm -rf ${TARGET_BUCKET_URL}
         && gsutil cp dummy-backup-20180622.tar.bz2 ${TARGET_BUCKET_URL}'"
