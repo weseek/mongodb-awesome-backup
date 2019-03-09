@@ -62,7 +62,9 @@ for ((i = 0; i < ${#REQUIRED_ENVS[@]}; i++)) {
 if [ $SATISFY -ne 1 ]; then trap EXIT; exit 1; fi
 
 # Override config file for GCS test
-echo -e $DOT_BOTO_OAUTH > conf/.boto_oauth
+if [ ! -f 'conf/.boto_oauth' ]; then
+  echo -e "$DOT_BOTO_OAUTH" > 'conf/.boto_oauth'
+fi
 
 # Clean up bucket before start mongodb
 docker-compose down -v
