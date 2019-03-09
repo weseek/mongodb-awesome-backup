@@ -33,6 +33,14 @@ assert_dummy_record_exists_on_mongodb () {
   if [ $? -ne 0 ]; then echo 'assert_restore_dummy_record FAILED'; exit 1; fi
 }
 
+# prepare docker-compose services
+prepare_docker_compose_services () {
+  # Start mongodb
+  docker-compose up --build mongo &
+  sleep 3 # wait for the network of docker-compose to be ready
+  docker-compose up --build init
+}
+
 # Start test script
 CWD=$(dirname $0)
 cd $CWD
@@ -47,26 +55,49 @@ SATISFY=1
 for ((i = 0; i < ${#REQUIRED_ENVS[@]}; i++)) {
   ENV=$(eval echo "\$${REQUIRED_ENVS[i]}")
   if [ -z "$ENV" ]; then
-    echo "ERROR: The environment variable ${REQUIRED_ENVS[i]} must be specified in test."
+    echo "ERROR: The environment variable ${REQUIRED_ENVS[i]} must be specified."
     SATISFY=0
   fi
 }
-if [ $SATISFY -ne 1 ]; then exit 1; fi
+if [ $SATISFY -ne 1 ]; then trap EXIT; exit 1; fi
 
 # Clean up bucket before start mongodb
 docker-compose down -v
 
-# Start mongodb
-docker-compose up --build mongo &
-sleep 3 # wait for the network of docker-compose to be ready
-docker-compose up --build init
+TEST_APPS=("app_default" "app_with_dot_boto")
+for ((i = 0; i < ${#TEST_APPS[@]}; i++)) {
+  prepare_docker_compose_services
 
-# Execute app_default
-docker-compose up --build app_default
-# Expect for app_default
-assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
-# Exit test for app_default
-echo 'Finished test for app_default: OK'
+  APP_NAME=${TEST_APPS[i]}
+
+  # Execute app
+  docker-compose up --build $APP_NAME
+  # Expect for app
+  assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
+  # Exit test for app
+  echo "Finished test for $APP_NAME: OK"
+
+  # Clean up all containers
+  docker-compose down -v
+}
+
+TEST_APPS=("app_backup_cronmode")
+for ((i = 0; i < ${#TEST_APPS[@]}; i++)) {
+  prepare_docker_compose_services
+
+  APP_NAME=${TEST_APPS[i]}
+
+  # Execute app in cron mode
+  docker-compose up --build $APP_NAME &
+  sleep 65 # wait for the network of docker-compose to be ready, and wait until test backup is executed at least once.
+  docker-compose stop $APP_NAME
+  # Expect for app_backup_cronmode
+  assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
+  # Exit test for app_restore
+  echo "Finished test for $APP_NAME: OK"
+}
+
+prepare_docker_compose_services
 
 # Expect for app_restore
 docker-compose up --build app_restore
@@ -74,15 +105,6 @@ docker-compose up --build app_restore
 assert_dummy_record_exists_on_mongodb
 # Exit test for app_restore
 echo 'Finished test for app_restore: OK'
-
-# Expect for app_backup_cronmode
-docker-compose up --build app_backup_cronmode &
-sleep 65 # wait for the network of docker-compose to be ready, and wait until test backup is executed at least once.
-docker-compose stop app_backup_cronmode
-# Expect for app_backup_cronmode
-assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
-# Exit test for app_restore
-echo 'Finished test for app_backup_cronmode: OK'
 
 # Clean up all containers
 docker-compose down -v

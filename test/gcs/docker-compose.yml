@@ -13,12 +13,21 @@ services:
       GCP_PROJECT_ID: $GCP_PROJECT_ID
       TARGET_BUCKET_URL: $TARGET_BUCKET_URL
 
+  # test for backup in command mode with .boto file
+  app_with_dot_boto:
+    <<: *app_default
+    volumes:
+      - $PWD/conf/.boto_oauth:/mab/.boto
+    environment:
+      <<: *base_env
+      GCP_ACCESS_KEY_ID: ""
+      GCP_SECRET_ACCESS_KEY: ""
+
   # test for backup in cron mode
   app_backup_cronmode:
     <<: *app_default
     environment:
       <<: *base_env
-      TARGET_BUCKET_URL: s3://app_backup_cronmode/
       CRONMODE: 'true'
       CRON_EXPRESSION: '* * * * *'
 
