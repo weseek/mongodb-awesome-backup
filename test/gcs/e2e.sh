@@ -17,12 +17,12 @@ assert_file_exists_on_gcs() {
   if [ $# -ne 1 ]; then exit 1; fi
 
   GCS_FILE_PATH=$1
-  docker-compose run app_default "list" | grep -q "${GCS_FILE_PATH}"
+  docker-compose run --rm app_default "list" | grep -q "${GCS_FILE_PATH}"
   if [ $? -ne 0 ]; then
     echo "assert_file_exists_on_gcs FAILED";
     echo "could not be found ${GCS_FILE_PATH} in GCS.";
     echo "list of files under ${GCS_FILE_PATH}"
-    docker-compose run app_default "list"
+    docker-compose run --rm app_default "list"
     exit 1;
   fi
 }
