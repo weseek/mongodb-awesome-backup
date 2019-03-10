@@ -78,4 +78,4 @@ docker-compose down -v
 # Clear trap
 trap EXIT
 
-echo "***** ALL TESTS ARE SUCCESSFUL *****"
+echo "***** S3 TESTS ARE SUCCESSFUL *****"

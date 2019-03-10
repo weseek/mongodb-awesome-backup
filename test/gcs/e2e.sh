@@ -154,4 +154,4 @@ for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
 # Clear trap
 trap EXIT
 
-echo "***** ALL TESTS ARE SUCCESSFUL *****"
+echo "***** GCS TESTS ARE SUCCESSFUL *****"
