@@ -8,7 +8,6 @@ jobs:
       DOCKER_COMPOSE_VER: 1.21.2
       # Disable interactive mode when running apt
       DEBIAN_FRONTEND: noninteractive
-      TARGET_BUCKET_URL: ${TARGET_BUCKET_URL_PREFIX}/${CIRCLE_PROJECT_USERNAME}_${CIRCLE_PROJECT_REPONAME}_${CIRCLE_BUILD_NUM}/
 
     steps:
       - checkout
@@ -62,4 +61,5 @@ jobs:
       - run:
           name: Run integration tests
           command: |
+            export TARGET_BUCKET_URL=${TARGET_BUCKET_URL_PREFIX}/${CIRCLE_PROJECT_USERNAME}_${CIRCLE_PROJECT_REPONAME}_${CIRCLE_BUILD_NUM}/
             test/all.sh
