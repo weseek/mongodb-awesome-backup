@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # End to end test script in case of storing to GCS
 
 # Handle exit and clean up containers
@@ -80,12 +80,11 @@ start_mongo_service_and_init_service () {
 execute_default_commands_and_assert_file_exists_on_gcs() {
   if [ $# -ne 2 ]; then exit 1; fi
 
-  SERVICE_NAME=$1
   INIT_BOTO=$2
-
   start_mongo_service_and_init_service $INIT_BOTO
 
   # Execute app
+  SERVICE_NAME=$1
   docker-compose up --build $SERVICE_NAME
   # Expect for app
   assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
@@ -104,12 +103,11 @@ execute_default_commands_and_assert_file_exists_on_gcs() {
 execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs() {
   if [ $# -ne 2 ]; then exit 1; fi
 
-  SERVICE_NAME=$1
   INIT_BOTO=$2
-
   start_mongo_service_and_init_service $INIT_BOTO
 
   # Execute app in cron mode
+  SERVICE_NAME=$1
   docker-compose up --build $SERVICE_NAME &
   sleep 65 # wait for the network of docker-compose to be ready, and wait until test backup is executed at least once.
   docker-compose stop $SERVICE_NAME
@@ -130,12 +128,11 @@ execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs() {
 execute_restore_command_and_assert_dummy_record_exists_on_mongodb() {
   if [ $# -ne 2 ]; then exit 1; fi
 
-  SERVICE_NAME=$1
   INIT_BOTO=$2
-
   start_mongo_service_and_init_service $INIT_BOTO
 
   # Expect for app_restore
+  SERVICE_NAME=$1
   docker-compose up --build $SERVICE_NAME
   # Expect for app_restore
   assert_dummy_record_exists_on_mongodb
@@ -171,23 +168,23 @@ docker-compose down -v
 
 # Test default commands with HMAC/OAuth authentications
 TEST_SERVICES=("app_default" "app_with_dot_boto")
-INIT_BOTO=("false" "true")
+INIT_BOTOS=("false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  execute_default_commands_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTO[i]}
+  execute_default_commands_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTOS[i]}
 }
 
 # Test default commands in cron mode with HMAC/OAuth authentications
 TEST_SERVICES=("app_backup_cronmode" "app_backup_cronmode_with_dot_boto")
-INIT_BOTO=("false" "true")
+INIT_BOTOS=("false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTO[i]}
+  execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTOS[i]}
 }
 
 # Test restore command with HMAC/OAuth authentications
 TEST_SERVICES=("app_restore" "app_restore_with_dot_boto")
-INIT_BOTO=("false" "true")
+INIT_BOTOS=("false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  execute_restore_command_and_assert_dummy_record_exists_on_mongodb ${TEST_SERVICES[i]} ${INIT_BOTO[i]}
+  execute_restore_command_and_assert_dummy_record_exists_on_mongodb ${TEST_SERVICES[i]} ${INIT_BOTOS[i]}
 }
 
 # Clear trap
