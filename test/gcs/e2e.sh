@@ -38,9 +38,9 @@ assert_dummy_record_exists_on_mongodb () {
 #     $1 ... INIT_BOTO: Boolean value whether initialize `/mab/.boto` with OAuth.
 #                       If set value true, initialize `/mab/.boto`.
 start_mongo_service_and_init_service () {
-  if [ $# -eq 1 ]; then
-    INIT_BOTO=$1
-  fi
+  if [ $# -ne 1 ]; then exit 1; fi
+
+  INIT_BOTO=$1
 
   # Initialize .boto config
   docker-compose up --build --no-start init
@@ -48,7 +48,7 @@ start_mongo_service_and_init_service () {
   DATASTORE_CNAME=$(docker ps -a -f id=${DATASTORE_CID} --format {{.Names}})
   docker cp conf/.boto_hmac "${DATASTORE_CNAME}:/tmp/.boto"
 
-  if [ -n "$INIT_BOTO" ]; then
+  if [ "$INIT_BOTO" == "true" ]; then
     # Config file for GCS test
     if [ ! -f 'conf/.boto_oauth' ]; then
       echo -e "$DOT_BOTO_OAUTH" > 'conf/.boto_oauth'
@@ -171,21 +171,21 @@ docker-compose down -v
 
 # Test default commands with HMAC/OAuth authentications
 TEST_SERVICES=("app_default" "app_with_dot_boto")
-INIT_BOTO=("" "true")
+INIT_BOTO=("false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   execute_default_commands_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTO[i]}
 }
 
 # Test default commands in cron mode with HMAC/OAuth authentications
 TEST_SERVICES=("app_backup_cronmode" "app_backup_cronmode_with_dot_boto")
-INIT_BOTO=("" "true")
+INIT_BOTO=("false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTO[i]}
 }
 
 # Test restore command with HMAC/OAuth authentications
 TEST_SERVICES=("app_restore" "app_restore_with_dot_boto")
-INIT_BOTO=("" "true")
+INIT_BOTO=("false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   execute_restore_command_and_assert_dummy_record_exists_on_mongodb ${TEST_SERVICES[i]} ${INIT_BOTO[i]}
 }
