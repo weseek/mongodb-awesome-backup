@@ -78,7 +78,7 @@ start_mongo_service_and_init_service () {
 #     $2 ... INIT_BOTO:    Boolean value whether initialize config for OAuth.
 #                          If set value true, initialize `/mab/.boto`.
 execute_default_commands_and_assert_file_exists_on_gcs() {
-  if [ $# -eq 2 ]; then exit 1; fi
+  if [ $# -ne 2 ]; then exit 1; fi
 
   SERVICE_NAME=$1
   INIT_BOTO=$2
@@ -102,7 +102,7 @@ execute_default_commands_and_assert_file_exists_on_gcs() {
 #     $2 ... INIT_BOTO:    Boolean value whether initialize config for OAuth.
 #                          If set value true, initialize `/mab/.boto`.
 execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs() {
-  if [ $# -eq 2 ]; then exit 1; fi
+  if [ $# -ne 2 ]; then exit 1; fi
 
   SERVICE_NAME=$1
   INIT_BOTO=$2
@@ -128,7 +128,7 @@ execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs() {
 #     $2 ... INIT_BOTO:    Boolean value whether initialize config for OAuth.
 #                          If set value true, initialize `/mab/.boto`.
 execute_restore_command_and_assert_dummy_record_exists_on_mongodb() {
-  if [ $# -eq 2 ]; then exit 1; fi
+  if [ $# -ne 2 ]; then exit 1; fi
 
   SERVICE_NAME=$1
   INIT_BOTO=$2
@@ -173,21 +173,21 @@ docker-compose down -v
 TEST_SERVICES=("app_default" "app_with_dot_boto")
 INIT_BOTO=("" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  execute_default_commands_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${WITH_BOTO[i]}
+  execute_default_commands_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTO[i]}
 }
 
 # Test default commands in cron mode with HMAC/OAuth authentications
 TEST_SERVICES=("app_backup_cronmode" "app_backup_cronmode_with_dot_boto")
 INIT_BOTO=("" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${WITH_BOTO[i]}
+  execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTO[i]}
 }
 
 # Test restore command with HMAC/OAuth authentications
 TEST_SERVICES=("app_restore" "app_restore_with_dot_boto")
 INIT_BOTO=("" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  execute_restore_command_and_assert_dummy_record_exists_on_mongodb ${TEST_SERVICES[i]} ${WITH_BOTO[i]}
+  execute_restore_command_and_assert_dummy_record_exists_on_mongodb ${TEST_SERVICES[i]} ${INIT_BOTO[i]}
 }
 
 # Clear trap
