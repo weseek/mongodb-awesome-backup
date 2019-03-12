@@ -26,7 +26,6 @@ services:
     <<: *app_default
     environment:
       <<: *base_env
-      TARGET_BUCKET_URL: $TARGET_BUCKET_URL
       TARGET_FILE: dummy-backup-20180622.tar.bz2
     command:
       - restore
@@ -54,7 +53,6 @@ services:
     <<: *app_with_dot_boto
     environment:
       <<: *with_boto_env
-      TARGET_BUCKET_URL: $TARGET_BUCKET_URL
       TARGET_FILE: dummy-backup-20180622.tar.bz2
     command:
       - restore
@@ -69,14 +67,14 @@ services:
       <<: *base_env
     volumes:
       - config_datastore_hmac:/tmp
-    entrypoint:
-      "dockerize
-       -wait tcp://mongo:27017
-       -timeout 60s /bin/bash -c
-        'while read line; do eval echo $$line; done < /tmp/.boto > /root/.boto
-        && gsutil ls ${TARGET_BUCKET_URL}
-        && gsutil rm -rf ${TARGET_BUCKET_URL}
-        && gsutil cp dummy-backup-20180622.tar.bz2 ${TARGET_BUCKET_URL}'"
+    entrypoint: > # Evaluate each line in /tmp/.boto is used to expand variables.
+      dockerize
+      -wait tcp://mongo:27017
+      -timeout 60s /bin/bash -c
+      'while read line; do eval echo $$line; done < /tmp/.boto > /root/.boto
+      && gsutil ls ${TARGET_BUCKET_URL}
+      && gsutil rm -rf ${TARGET_BUCKET_URL}
+      && gsutil cp dummy-backup-20180622.tar.bz2 ${TARGET_BUCKET_URL}'
 
   # backup target (empty)
   mongo:

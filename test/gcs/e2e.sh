@@ -20,7 +20,7 @@ assert_file_exists_on_gcs() {
   docker-compose run --rm app_default "list" | grep -q "${GCS_FILE_PATH}"
   if [ $? -ne 0 ]; then
     echo "assert_file_exists_on_gcs FAILED";
-    echo "could not be found ${GCS_FILE_PATH} in GCS.";
+    echo "${GCS_FILE_PATH} not found in GCS.";
     echo "list of files under ${GCS_FILE_PATH}"
     docker-compose run --rm app_default "list"
     exit 1;
@@ -34,6 +34,9 @@ assert_dummy_record_exists_on_mongodb () {
 }
 
 # Start mongo service and init services
+#   ARGS
+#     $1 ... INIT_BOTO: Boolean value whether initialize `/mab/.boto` with OAuth.
+#                       If set value true, initialize `/mab/.boto`.
 start_mongo_service_and_init_service () {
   if [ $# -eq 1 ]; then
     INIT_BOTO=$1
@@ -69,6 +72,80 @@ start_mongo_service_and_init_service () {
   docker-compose up --build init
 }
 
+# Execute default commands and assert file exists on gcs
+#   ARGS
+#     $1 ... SERVICE_NAME: Service name in docker-compose.yml to execute
+#     $2 ... INIT_BOTO:    Boolean value whether initialize config for OAuth.
+#                          If set value true, initialize `/mab/.boto`.
+execute_default_commands_and_assert_file_exists_on_gcs() {
+  if [ $# -eq 2 ]; then exit 1; fi
+
+  SERVICE_NAME=$1
+  INIT_BOTO=$2
+
+  start_mongo_service_and_init_service $INIT_BOTO
+
+  # Execute app
+  docker-compose up --build $SERVICE_NAME
+  # Expect for app
+  assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
+  # Exit test for app
+  echo "Finished test for $SERVICE_NAME: OK"
+
+  # Clean up all containers
+  docker-compose down -v
+}
+
+# Execute default commands in cron mode and assert file exists on gcs
+#   ARGS
+#     $1 ... SERVICE_NAME: Service name in docker-compose.yml to execute
+#     $2 ... INIT_BOTO:    Boolean value whether initialize config for OAuth.
+#                          If set value true, initialize `/mab/.boto`.
+execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs() {
+  if [ $# -eq 2 ]; then exit 1; fi
+
+  SERVICE_NAME=$1
+  INIT_BOTO=$2
+
+  start_mongo_service_and_init_service $INIT_BOTO
+
+  # Execute app in cron mode
+  docker-compose up --build $SERVICE_NAME &
+  sleep 65 # wait for the network of docker-compose to be ready, and wait until test backup is executed at least once.
+  docker-compose stop $SERVICE_NAME
+  # Expect for app_backup_cronmode
+  assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
+  # Exit test for app_restore
+  echo "Finished test for $SERVICE_NAME: OK"
+
+  # Clean up all containers
+  docker-compose down -v
+}
+
+# Execute restore command and assert dummy record exists on mongodb
+#   ARGS
+#     $1 ... SERVICE_NAME: Service name in docker-compose.yml to execute
+#     $2 ... INIT_BOTO:    Boolean value whether initialize config for OAuth.
+#                          If set value true, initialize `/mab/.boto`.
+execute_restore_command_and_assert_dummy_record_exists_on_mongodb() {
+  if [ $# -eq 2 ]; then exit 1; fi
+
+  SERVICE_NAME=$1
+  INIT_BOTO=$2
+
+  start_mongo_service_and_init_service $INIT_BOTO
+
+  # Expect for app_restore
+  docker-compose up --build $SERVICE_NAME
+  # Expect for app_restore
+  assert_dummy_record_exists_on_mongodb
+  # Exit test for app_restore
+  echo "Finished test for $SERVICE_NAME: OK"
+
+  # Clean up all containers
+  docker-compose down -v
+}
+
 # Start test script
 CWD=$(dirname $0)
 cd $CWD
@@ -94,61 +171,23 @@ docker-compose down -v
 
 # Test default commands with HMAC/OAuth authentications
 TEST_SERVICES=("app_default" "app_with_dot_boto")
-WITH_BOTO=("" "true")
+INIT_BOTO=("" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  start_mongo_service_and_init_service ${WITH_BOTO[i]}
-
-  SERVICE_NAME=${TEST_SERVICES[i]}
-
-  # Execute app
-  docker-compose up --build $SERVICE_NAME
-  # Expect for app
-  assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
-  # Exit test for app
-  echo "Finished test for $SERVICE_NAME: OK"
-
-  # Clean up all containers
-  docker-compose down -v
+  execute_default_commands_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${WITH_BOTO[i]}
 }
 
 # Test default commands in cron mode with HMAC/OAuth authentications
 TEST_SERVICES=("app_backup_cronmode" "app_backup_cronmode_with_dot_boto")
-WITH_BOTO=("" "true")
+INIT_BOTO=("" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  start_mongo_service_and_init_service ${WITH_BOTO[i]}
-
-  SERVICE_NAME=${TEST_SERVICES[i]}
-
-  # Execute app in cron mode
-  docker-compose up --build $SERVICE_NAME &
-  sleep 65 # wait for the network of docker-compose to be ready, and wait until test backup is executed at least once.
-  docker-compose stop $SERVICE_NAME
-  # Expect for app_backup_cronmode
-  assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
-  # Exit test for app_restore
-  echo "Finished test for $SERVICE_NAME: OK"
-
-  # Clean up all containers
-  docker-compose down -v
+  execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${WITH_BOTO[i]}
 }
 
 # Test restore command with HMAC/OAuth authentications
 TEST_SERVICES=("app_restore" "app_restore_with_dot_boto")
-WITH_BOTO=("" "true")
+INIT_BOTO=("" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
-  start_mongo_service_and_init_service ${WITH_BOTO[i]}
-
-  SERVICE_NAME=${TEST_SERVICES[i]}
-
-  # Expect for app_restore
-  docker-compose up --build $SERVICE_NAME
-  # Expect for app_restore
-  assert_dummy_record_exists_on_mongodb
-  # Exit test for app_restore
-  echo "Finished test for $SERVICE_NAME: OK"
-
-  # Clean up all containers
-  docker-compose down -v
+  execute_restore_command_and_assert_dummy_record_exists_on_mongodb ${TEST_SERVICES[i]} ${WITH_BOTO[i]}
 }
 
 # Clear trap
