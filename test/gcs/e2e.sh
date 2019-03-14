@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # End to end test script in case of storing to GCS
 
 # Handle exit and clean up containers
