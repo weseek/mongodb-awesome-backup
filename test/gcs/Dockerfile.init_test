@@ -7,7 +7,8 @@ RUN apk add --no-cache \
     coreutils \
     bash \
     tzdata \
-    curl
+    curl \
+    gettext
 
 # install dockerize
 ENV DOCKERIZE_VERSION v0.5.0

@@ -20,7 +20,7 @@ assert_file_exists_on_gcs() {
   docker-compose run --rm app_default "list" | grep -q "${GCS_FILE_PATH}"
   if [ $? -ne 0 ]; then
     echo "assert_file_exists_on_gcs FAILED";
-    echo "${GCS_FILE_PATH} not found in GCS.";
+    echo "could not find ${GCS_FILE_PATH} in GCS.";
     echo "list of files under ${GCS_FILE_PATH}"
     docker-compose run --rm app_default "list"
     exit 1;
@@ -36,7 +36,7 @@ assert_dummy_record_exists_on_mongodb () {
 # Start mongo service and init services
 #   ARGS
 #     $1 ... INIT_BOTO: Boolean value whether initialize `/mab/.boto` with OAuth.
-#                       If set value true, initialize `/mab/.boto`.
+#                       If set value "true", initialize `/mab/.boto`.
 start_mongo_service_and_init_service () {
   if [ $# -ne 1 ]; then exit 1; fi
 
