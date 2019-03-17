@@ -13,7 +13,7 @@ Posting Pull Requests
 
 * Make sure to post PRs which based on latest master branch.
 * Please make sure to pass the test suite before posting your PR.
-    * Executing **test for S3 is required**, and executing **test for GCS is not required**, but is preferred.
+    * Please make sure to pass the **test for S3** at least, if possible make sure to pass the **test for GCS**.
 
 Executing test locally
 ----------------------
