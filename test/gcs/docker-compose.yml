@@ -75,12 +75,7 @@ services:
       - 60s
       - /bin/bash
       - -c
-      # Evaluate each line in /tmp/.boto is used to expand variables.
-      - >
-        envsubst < /tmp/.boto > /root/.boto
-        && gsutil ls ${TARGET_BUCKET_URL}
-        && gsutil rm -rf ${TARGET_BUCKET_URL}
-        && gsutil cp dummy-backup-20180622.tar.bz2 ${TARGET_BUCKET_URL}
+      - /root/entrypoint.init_test.sh
 
   # backup target (empty)
   mongo:
