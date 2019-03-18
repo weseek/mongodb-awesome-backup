@@ -19,5 +19,8 @@ RUN curl -SL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_V
 # dummy backup data for restore
 COPY dummy-backup-20180622.tar.bz2 /
 
+# copy shell script for entrypoint
+COPY entrypoint.init_test.sh /root
+
 # set timezone JST
 RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
