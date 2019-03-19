@@ -61,4 +61,5 @@ jobs:
       - run:
           name: Run integration tests
           command: |
-            test/e2e.sh
+            export TARGET_BUCKET_URL=${TARGET_BUCKET_URL_PREFIX}/${CIRCLE_PROJECT_USERNAME}_${CIRCLE_PROJECT_REPONAME}_${CIRCLE_BUILD_NUM}/
+            test/all.sh

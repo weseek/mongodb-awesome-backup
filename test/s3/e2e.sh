@@ -20,7 +20,7 @@ assert_file_exists_on_s3() {
   docker-compose exec s3proxy sh -c "test -f /data/${S3_FILE_PATH}"
   if [ $? -ne 0 ]; then
     echo "assert_file_exists_on_s3 FAILED";
-    echo "could not be found /data/${S3_FILE_PATH} in s3proxy.";
+    echo "could not find /data/${S3_FILE_PATH} in s3proxy.";
     echo "list of files under /data/"
     docker-compose exec s3proxy sh -c "ls -alR /data/"
     exit 1;
@@ -57,14 +57,14 @@ assert_file_exists_on_s3 "app_default/backup-${TODAY}.tar.bz2"
 echo 'Finished test for app_default: OK'
 
 # Expect for app_restore
-docker-compose up app_restore
+docker-compose up --build app_restore
 # Expect for app_restore
 assert_dummy_record_exists_on_mongodb
 # Exit test for app_restore
 echo 'Finished test for app_restore: OK'
 
 # Expect for app_backup_cronmode
-docker-compose up app_backup_cronmode &
+docker-compose up --build app_backup_cronmode &
 sleep 65 # wait for the network of docker-compose to be ready, and wait until test backup is executed at least once.
 docker-compose stop app_backup_cronmode
 # Expect for app_backup_cronmode
@@ -78,4 +78,4 @@ docker-compose down -v
 # Clear trap
 trap EXIT
 
-echo "***** ALL TESTS ARE SUCCESSFUL *****"
+echo "***** S3 TESTS ARE SUCCESSFUL *****"

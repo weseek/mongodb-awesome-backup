@@ -1,0 +1,88 @@
+# This file would be executed from e2e.sh
+version: '3'
+
+services:
+  # test for backup in command mode
+  app_default: &app_default
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    environment: &base_env
+      GCP_ACCESS_KEY_ID: $GCP_ACCESS_KEY_ID
+      GCP_SECRET_ACCESS_KEY: $GCP_SECRET_ACCESS_KEY
+      GCP_PROJECT_ID: $GCP_PROJECT_ID
+      TARGET_BUCKET_URL: $TARGET_BUCKET_URL
+
+  # test for backup in cron mode
+  app_backup_cronmode:
+    <<: *app_default
+    environment:
+      <<: *base_env
+      CRONMODE: 'true'
+      CRON_EXPRESSION: '* * * * *'
+
+  # test for restore
+  app_restore:
+    <<: *app_default
+    environment:
+      <<: *base_env
+      TARGET_FILE: dummy-backup-20180622.tar.bz2
+    command:
+      - restore
+
+  # test for backup in command mode with .boto file
+  app_with_dot_boto: &app_with_dot_boto
+    <<: *app_default
+    volumes:
+      - config_datastore_oauth:/mab
+    environment: &with_boto_env
+      <<: *base_env
+      GCP_ACCESS_KEY_ID: ""
+      GCP_SECRET_ACCESS_KEY: ""
+
+  # test for backup in cron mode with .boto file
+  app_backup_cronmode_with_dot_boto:
+    <<: *app_with_dot_boto
+    environment:
+      <<: *with_boto_env
+      CRONMODE: 'true'
+      CRON_EXPRESSION: '* * * * *'
+
+  # test for restore with .boto file
+  app_restore_with_dot_boto:
+    <<: *app_with_dot_boto
+    environment:
+      <<: *with_boto_env
+      TARGET_FILE: dummy-backup-20180622.tar.bz2
+    command:
+      - restore
+
+  # initialize GCS bucket for test
+  init:
+    build:
+      context: ./
+      dockerfile: Dockerfile.init_test
+      args: *base_env
+    environment:
+      <<: *base_env
+    volumes:
+      - config_datastore_hmac:/tmp
+    entrypoint:
+      - dockerize
+      - -wait
+      - tcp://mongo:27017
+      - -timeout
+      - 60s
+      - /bin/bash
+      - -c
+      - /root/entrypoint.init_test.sh
+
+  # backup target (empty)
+  mongo:
+    image: mongo:3.4
+    environment:
+      - TZ=Asia/Tokyo
+
+volumes:
+  config_datastore_hmac:
+  config_datastore_oauth:
