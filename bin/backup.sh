@@ -3,6 +3,7 @@
 # settings
 BACKUPFILE_PREFIX=${BACKUPFILE_PREFIX:-backup}
 MONGODB_HOST=${MONGODB_HOST:-mongo}
+CRONMODE=${CRONMODE:-false}
 #MONGODB_HOST=
 #MONGODB_DBNAME=
 #MONGODB_USERNAME=
@@ -68,3 +69,8 @@ elif [ `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "gs" ]; then
   gs_copy_file ${TARBALL_FULLPATH} ${TARGET_BUCKET_URL}${TARBALL}
 fi
 
+# clean up working files if in cron mode
+if ${CRONMODE} ; then
+  rm -rf ${TARGET}
+  rm -f ${TARBALL_FULLPATH}
+fi
