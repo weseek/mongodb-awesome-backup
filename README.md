@@ -45,10 +45,7 @@ and after running this, `backup-YYYYMMdd.tar.bz2` will be placed on Target S3 Bu
 
 ### How to backup in cron mode
 
-1. modify crontab file
-  `$ vim crontab/root`
-1. confirm that the permission of "./crontab/root" is "root:root"
-1. execute docker container in cron mode
+Execute docker container with setting environment CRONMODE to "ture".
 
 ```bash
 docker run --rm \
@@ -59,7 +56,7 @@ docker run --rm \
   [ -e GCP_PROJECT_ID=<Your GCP Project ID> \ ]
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   -e CRONMODE=true \
-  -e CRON_EXPRESSION=<Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)> \
+  -e CRON_EXPRESSION=<Cron expression (ex. "CRON_EXPRESSION='0 4 * * *'" if you want to run at 4:00 every day)> \
   [ -e BACKUPFILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
