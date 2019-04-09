@@ -45,7 +45,7 @@ and after running this, `backup-YYYYMMdd.tar.bz2` will be placed on Target S3 Bu
 
 ### How to backup in cron mode
 
-Execute docker container with setting environment CRONMODE to "ture".
+Execute a docker container with `CRONMODE=true`.
 
 ```bash
 docker run --rm \
