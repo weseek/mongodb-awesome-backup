@@ -21,9 +21,7 @@ TAR_OPTS="jxvf"
 DIRNAME=`/usr/bin/dirname ${TARGET}`
 BASENAME=`/usr/bin/basename ${TARGET}`
 TARBALL_FULLPATH="${TMPDIR}/${TARGET_FILE}"
-
-S3_TARBALL_FULLURL=${TARGET_BUCKET_URL}${TARGET_FILE}
-GS_TARBALL_FULLURL=${TARGET_BUCKET_URL}${TARGET_FILE}
+TARBALL_FULLURL=${TARGET_BUCKET_URL}${TARGET_FILE}
 
 # check parameters
 if [ "x${TARGET_BUCKET_URL}" == "x" ]; then
@@ -37,9 +35,9 @@ fi
 
 if [ `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "s3" ]; then
   # download tarball from Amazon S3
-  s3_copy_file ${S3_TARBALL_FULLURL} ${TARBALL_FULLPATH}
+  s3_copy_file ${TARBALL_FULLURL} ${TARBALL_FULLPATH}
 elif [ `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "gs" ]; then
-  gs_copy_file ${GS_TARBALL_FULLURL} ${TARBALL_FULLPATH}
+  gs_copy_file ${TARBALL_FULLURL} ${TARBALL_FULLPATH}
 fi
 
 # run tar command
