@@ -64,9 +64,9 @@ time ${TAR_CMD} ${TAR_OPTS} ${TARBALL_FULLPATH} -C ${DIRNAME} ${BASENAME}
 
 if [ `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "s3" ]; then
   # transfer tarball to Amazon S3
-  s3_copy_file ${TARBALL_FULLPATH} ${TARGET_BUCKET_URL}${TARBALL}
+  s3_copy_file ${TARBALL_FULLPATH} ${TARGET_BUCKET_URL}
 elif [ `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "gs" ]; then
-  gs_copy_file ${TARBALL_FULLPATH} ${TARGET_BUCKET_URL}${TARBALL}
+  gs_copy_file ${TARBALL_FULLPATH} ${TARGET_BUCKET_URL}
 fi
 
 # clean up working files if in cron mode
