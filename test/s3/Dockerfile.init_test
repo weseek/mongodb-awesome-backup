@@ -17,7 +17,7 @@ RUN curl -SL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_V
       | tar -xz -C /usr/local/bin
 
 # dummy backup data for restore
-COPY dummy-backup-20180622.tar.bz2 /
+COPY dummy-backup-20180622000000.tar.bz2 /
 
 # copy shell script for entrypoint
 COPY entrypoint.init_test.sh /root
