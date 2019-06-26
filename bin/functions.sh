@@ -64,6 +64,11 @@ gs_copy_file() {
 	${GCPCLI} ${GCPCLIOPT} ${GCPCLI_COPY_OPT} $1 $2
 }
 
+# Create current datetime string(YYYYmmddHHMMSS)
+create_current_yyyymmddhhmmss() {
+	echo `/bin/date +%Y%m%d%H%M%S`
+}
+
 # Create today's date string(YYYYmmdd)
 create_today_yyyymmdd() {
 	create_past_yyyymmdd 0
