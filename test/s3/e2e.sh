@@ -17,7 +17,7 @@ assert_file_exists_on_s3() {
   if [ $# -ne 1 ]; then exit 1; fi
 
   S3_FILE_PATH=$1
-  docker-compose exec s3proxy sh -c "test -f /data/${S3_FILE_PATH}"
+  docker-compose exec s3proxy sh -c "ls /data/${S3_FILE_PATH} >/dev/null 2>&1"
   if [ $? -ne 0 ]; then
     echo "assert_file_exists_on_s3 FAILED";
     echo "could not find /data/${S3_FILE_PATH} in s3proxy.";
