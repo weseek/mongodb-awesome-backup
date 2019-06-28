@@ -69,11 +69,6 @@ create_current_yyyymmddhhmmss() {
 	echo `/bin/date +%Y%m%d%H%M%S`
 }
 
-# Create today's date string(YYYYmmdd)
-create_today_yyyymmdd() {
-	create_past_yyyymmdd 0
-}
-
 # Create date string of n days ago
 # arguments: 1. how many days ago
 create_past_yyyymmdd() {
