@@ -87,7 +87,7 @@ execute_default_commands_and_assert_file_exists_on_gcs() {
   SERVICE_NAME=$1
   docker-compose up --build $SERVICE_NAME
   # Expect for app
-  assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
+  assert_file_exists_on_gcs "backup-${TODAY}"
   # Exit test for app
   echo "Finished test for $SERVICE_NAME: OK"
 
@@ -112,7 +112,7 @@ execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs() {
   sleep 65 # wait for the network of docker-compose to be ready, and wait until test backup is executed at least once.
   docker-compose stop $SERVICE_NAME
   # Expect for app_backup_cronmode
-  assert_file_exists_on_gcs "backup-${TODAY}.tar.bz2"
+  assert_file_exists_on_gcs "backup-${TODAY}"
   # Exit test for app_restore
   echo "Finished test for $SERVICE_NAME: OK"
 
@@ -152,7 +152,7 @@ TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 echo "=== $0 started at `/bin/date "+%Y/%m/%d %H:%M:%S"` ==="
 
 # Validate environment variables
-REQUIRED_ENVS=("GCP_ACCESS_KEY_ID" "GCP_SECRET_ACCESS_KEY" "GCP_PROJECT_ID" "TARGET_BUCKET_URL" "DOT_BOTO_OAUTH")
+REQUIRED_ENVS=("GCP_ACCESS_KEY_ID" "GCP_SECRET_ACCESS_KEY" "GCP_PROJECT_ID" "TARGET_BUCKET_URL")
 SATISFY=1
 for ((i = 0; i < ${#REQUIRED_ENVS[@]}; i++)) {
   ENV=$(eval echo "\$${REQUIRED_ENVS[i]}")

@@ -17,7 +17,7 @@ CWD=`/usr/bin/dirname $0`
 cd $CWD
 
 . ./functions.sh
-TODAY=`create_today_yyyymmdd`
+NOW=`create_current_yyyymmddhhmmss`
 
 echo "=== $0 started at `/bin/date "+%Y/%m/%d %H:%M:%S"` ==="
 
@@ -29,7 +29,7 @@ TAR_OPTS="jcvf"
 
 DIRNAME=`/usr/bin/dirname ${TARGET}`
 BASENAME=`/usr/bin/basename ${TARGET}`
-TARBALL="${BACKUPFILE_PREFIX}-${TODAY}.tar.bz2"
+TARBALL="${BACKUPFILE_PREFIX}-${NOW}.tar.bz2"
 TARBALL_FULLPATH="${TMPDIR}/${TARBALL}"
 
 
