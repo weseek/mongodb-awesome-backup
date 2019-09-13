@@ -119,6 +119,7 @@ Environment variables
 | MONGODB_AUTHDB    | Authentication DB name                                                                                                                                                        | -       |
 | CRONMODE          | If set "true", this container is executed in cron mode.  In cron mode, the script will be executed with the specified arguments and at the time specified by CRON_EXPRESSION. | "false" |
 | CRON_EXPRESSION   | Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)                                                                                        | -       |
+| HEALTHCHECKS_URL  | URL that gets called after a successful backup (eg. https://healthchecks.io)                                                                                                  | -       |
 
 ### For `restore`
 

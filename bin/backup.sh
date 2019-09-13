@@ -69,6 +69,11 @@ elif [ `echo $TARGET_BUCKET_URL | cut -f1 -d":"` == "gs" ]; then
   gs_copy_file ${TARBALL_FULLPATH} ${TARGET_BUCKET_URL}
 fi
 
+# call healthchecks url for successful backup
+if [ "x${HEALTHCHECKS_URL}" != "x" ]; then
+  curl -fsS --retry 3 ${HEALTHCHECKS_URL} > /dev/null
+fi
+
 # clean up working files if in cron mode
 if ${CRONMODE} ; then
   rm -rf ${TARGET}
