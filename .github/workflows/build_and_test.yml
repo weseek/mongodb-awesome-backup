@@ -1,19 +1,28 @@
-name: Build and test
+name: Test
 
 on: [push]
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
+    env:
+      # Environments to connect to GCS.
+      DOT_BOTO_OAUTH: ${{ secrets.DOT_BOTO_OAUTH }}
+      GCP_ACCESS_KEY_ID: ${{ secrets.GCP_ACCESS_KEY_ID }}
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_SECRET_ACCESS_KEY: ${{ secrets.GCP_SECRET_ACCESS_KEY }}
+      TARGET_BUCKET_URL_PREFIX: gs://staging.mongodb-awesome-backup.appspot.com/test
+      # Match with the time zone of the mongodb-awesome-backup container.
+      TZ: Asia/Tokyo
 
     steps:
     - uses: actions/checkout@v2
-    - name: Run a one-line script
-      run: echo Hello, world!
-    - name: Run a multi-line script
+
+    - name: Run integration tests
       run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
-        docker --version
-        docker-compose --version
+        # Set environment for integration tests
+        BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
+        echo ::set-env name=TARGET_BUCKET_URL::"${{ env.TARGET_BUCKET_URL_PREFIX }}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
+        
+        test/all.sh
