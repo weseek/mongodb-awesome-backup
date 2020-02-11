@@ -23,7 +23,6 @@ jobs:
       run: |
         # Set environment for integration tests
         BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
-        TARGET_BUCKET_URL="${{ env.TARGET_BUCKET_URL_PREFIX }}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
-        echo TARGET_BUCKET_URL ::set-env name=TARGET_BUCKET_URL::$TARGET_BUCKET_URL
+        export TARGET_BUCKET_URL=$"${{ env.TARGET_BUCKET_URL_PREFIX }}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
         
         test/all.sh
