@@ -23,7 +23,7 @@ jobs:
       run: |
         # Set environment for integration tests
         BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
-        export TARGET_BUCKET_URL=$"${{ env.TARGET_BUCKET_URL_PREFIX }}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
+        export TARGET_BUCKET_URL="${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
         
         test/all.sh
 
@@ -32,6 +32,6 @@ jobs:
       # if: failure()
       with:
         type: ${{ job.status }}
-        job_name: '*${{ GITHUB_WORKFLOW }}*'
+        job_name: '*${{ env.GITHUB_WORKFLOW }}*'
         url: ${{ secrets.SLACK_WEBHOOK_URL }}
         channel: '#srv'
