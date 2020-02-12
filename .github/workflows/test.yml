@@ -25,8 +25,7 @@ jobs:
         BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
         export TARGET_BUCKET_URL="${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
         
-        # test/all.sh
-        exit 1
+        test/all.sh
 
     - name: Slack Notification
       uses: homoluctus/slatify@master
