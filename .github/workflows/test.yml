@@ -29,9 +29,9 @@ jobs:
 
     - name: Slack Notification
       uses: homoluctus/slatify@master
-        # if: failure()
-        with:
-          type: ${{ job.status }}
-          job_name: '*${{ GITHUB_WORKFLOW }}*'
-          url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          channel: '#srv'
+      # if: failure()
+      with:
+        type: ${{ job.status }}
+        job_name: '*${{ GITHUB_WORKFLOW }}*'
+        url: ${{ secrets.SLACK_WEBHOOK_URL }}
+        channel: '#srv'
