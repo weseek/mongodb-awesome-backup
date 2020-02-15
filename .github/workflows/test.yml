@@ -34,4 +34,4 @@ jobs:
         type: ${{ job.status }}
         job_name: '*${{ github.workflow }}*'
         url: ${{ secrets.SLACK_WEBHOOK_URL }}
-        channel: '#srv'
+        channel: ${{ secrets.SLACK_CHANNEL }}

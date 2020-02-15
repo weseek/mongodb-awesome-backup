@@ -29,7 +29,7 @@ Executing test locally
 ### test for GCS only
 
 * Prepare GCS bucket for testing only
-    * Notice that **ALL OBJECTS UNDER `TARGET_BUCKET_URL` WILL BE REMOVED IN TESTING**.
+    * Notice that **ALL OBJECTS UNDER `TARGET_BUCKET_URL` WILL BE REMOVED DURING TESTING**.
 * Save auth0 credentials to `conf/.boto_oauth` by executing `gsutil`
     ```bash
     $ cd /path/to/mab/repository/
