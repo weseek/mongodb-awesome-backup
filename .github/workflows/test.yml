@@ -1,0 +1,37 @@
+name: Test
+
+on: [push]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    env:
+      # Environments to connect to GCS.
+      DOT_BOTO_OAUTH: ${{ secrets.DOT_BOTO_OAUTH }}
+      GCP_ACCESS_KEY_ID: ${{ secrets.GCP_ACCESS_KEY_ID }}
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_SECRET_ACCESS_KEY: ${{ secrets.GCP_SECRET_ACCESS_KEY }}
+      TARGET_BUCKET_URL_PREFIX: gs://staging.mongodb-awesome-backup.appspot.com/test
+      # Match with the time zone of the mongodb-awesome-backup container.
+      TZ: Asia/Tokyo
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Run integration tests
+      run: |
+        # Set environment for integration tests
+        BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
+        export TARGET_BUCKET_URL="${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
+        
+        test/all.sh
+
+    - name: Slack Notification
+      uses: homoluctus/slatify@master
+      if: always()
+      with:
+        type: ${{ job.status }}
+        job_name: '*${{ github.workflow }}*'
+        url: ${{ secrets.SLACK_WEBHOOK_URL }}
+        channel: ${{ secrets.SLACK_CHANNEL }}

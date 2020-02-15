@@ -29,7 +29,7 @@ assert_file_exists_on_gcs() {
 
 # Assert restore is successful
 assert_dummy_record_exists_on_mongodb () {
-  docker-compose exec mongo bash -c 'echo -e "use dummy;\n db.dummy.find({name: \"test\"})\n" | mongo | grep -q "ObjectId"'
+  docker-compose exec -T mongo bash -c 'echo -e "use dummy;\n db.dummy.find({name: \"test\"})\n" | mongo | grep -q "ObjectId"'
   if [ $? -ne 0 ]; then echo 'assert_restore_dummy_record FAILED'; exit 1; fi
 }
 
