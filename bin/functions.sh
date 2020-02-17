@@ -5,7 +5,7 @@ AWSCLI_LIST_OPT="s3 ls"
 AWSCLI_DEL_OPT="s3 rm"
 AWSCLIOPT=${AWSCLIOPT:-}
 
-GCPCLI="/root/gsutil/gsutil"
+GCPCLI="/root/google-cloud-sdk/bin/gsutil"
 GCPCLI_COPY_OPT="cp"
 GCPCLI_LIST_OPT="ls"
 GCPCLI_DEL_OPT="rm"

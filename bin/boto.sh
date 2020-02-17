@@ -3,7 +3,7 @@ if [ "`echo $TARGET_BUCKET_URL | cut -f1 -d':'`" != "gs" ]; then
 	exit 0
 fi
 
-GCPCLI="/root/gsutil/gsutil"
+GCPCLI="/root/google-cloud-sdk/bin/gsutil"
 MOUNT="/mab"
 
 if [ -n "${GCP_ACCESS_KEY_ID}" ] && [ -n "${GCP_SECRET_ACCESS_KEY}" ]; then
