@@ -6,14 +6,14 @@ RUN apk add --no-cache \
     coreutils \
     bash \
     tzdata \
-    py2-pip \
+    python2 \
     mongodb-tools \
     curl
-    
-RUN pip install awscli
-RUN curl https://storage.googleapis.com/pub/gsutil.tar.gz | tar xz -C $HOME
-RUN echo "export PATH=${PATH}:$HOME/gsutil" >> ~/.bashrc
 
+# install gcloud (also gsutil)
+ARG GCLOUD_URL=https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-245.0.0-linux-x86_64.tar.gz?hl=ja
+RUN curl $GCLOUD_URL | tar xz -C $HOME
+RUN $HOME/google-cloud-sdk/install.sh -q --path-update true
 
 # set timezone JST
 RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
