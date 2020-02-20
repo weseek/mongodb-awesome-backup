@@ -2,18 +2,18 @@
 version: '3'
 
 services:
-  # test for backup in command mode
+  # Service account authorization
+  ### test for backup in command mode
   app_default: &app_default
     build:
       context: ../../
       dockerfile: Dockerfile
     environment: &base_env
-      GCP_ACCESS_KEY_ID: $GCP_ACCESS_KEY_ID
-      GCP_SECRET_ACCESS_KEY: $GCP_SECRET_ACCESS_KEY
+      GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
       GCP_PROJECT_ID: $GCP_PROJECT_ID
       TARGET_BUCKET_URL: $TARGET_BUCKET_URL
 
-  # test for backup in cron mode
+  ### test for backup in cron mode
   app_backup_cronmode:
     <<: *app_default
     environment:
@@ -21,7 +21,7 @@ services:
       CRONMODE: 'true'
       CRON_EXPRESSION: '* * * * *'
 
-  # test for restore
+  ### test for restore
   app_restore:
     <<: *app_default
     environment:
@@ -30,7 +30,35 @@ services:
     command:
       - restore
 
-  # test for backup in command mode with .boto file
+  # HMAC authorization
+  ### test for backup in command mode using HMAC authorization
+  app_using_hmac_auth: &app_using_hmac_auth
+    <<: *app_default
+    environment: &using_hmac_auth_env
+      GCP_ACCESS_KEY_ID: $GCP_ACCESS_KEY_ID
+      GCP_SECRET_ACCESS_KEY: $GCP_SECRET_ACCESS_KEY
+      GCP_PROJECT_ID: $GCP_PROJECT_ID
+      TARGET_BUCKET_URL: $TARGET_BUCKET_URL
+
+  ### test for backup in cron mode using HMAC authorization
+  app_backup_cronmode_using_hmac_auth:
+    <<: *app_using_hmac_auth
+    environment:
+      <<: *using_hmac_auth_env
+      CRONMODE: 'true'
+      CRON_EXPRESSION: '* * * * *'
+
+  ### test for restore using HMAC authorization
+  app_restore_with_dot_boto:
+    <<: *app_using_hmac_auth
+    environment:
+      <<: *using_hmac_auth_env
+      TARGET_FILE: dummy-backup-20180622000000.tar.bz2
+    command:
+      - restore
+
+  # Using `.boto` file authorization
+  ### test for backup in command mode with .boto file
   app_with_dot_boto: &app_with_dot_boto
     <<: *app_default
     volumes:
@@ -40,7 +68,7 @@ services:
       GCP_ACCESS_KEY_ID: ""
       GCP_SECRET_ACCESS_KEY: ""
 
-  # test for backup in cron mode with .boto file
+  ### test for backup in cron mode with .boto file
   app_backup_cronmode_with_dot_boto:
     <<: *app_with_dot_boto
     environment:
@@ -48,7 +76,7 @@ services:
       CRONMODE: 'true'
       CRON_EXPRESSION: '* * * * *'
 
-  # test for restore with .boto file
+  ### test for restore with .boto file
   app_restore_with_dot_boto:
     <<: *app_with_dot_boto
     environment:
