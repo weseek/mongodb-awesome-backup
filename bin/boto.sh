@@ -35,12 +35,12 @@ default_project_id = $GCP_PROJECT_ID
 
 [OAuth2]
 HERE
+elif [ -f ${MOUNT}/.boto ]; then
+  # Using mounted `.boto` file authorization
+  cp ${MOUNT}/.boto /root/.boto
 elif [ ! -f ${MOUNT}/.boto ]; then
   # Using interactive authorization
   if [ ! -d ${MOUNT} ]; then mkdir -p ${MOUNT}; fi
   ${GCPCLI} config -o ${MOUNT}/.boto
-  cp ${MOUNT}/.boto /root/.boto
-elif [ -f ${MOUNT}/.boto ]; then
-  # Using mounted `.boto` file authorization
   cp ${MOUNT}/.boto /root/.boto
 fi
