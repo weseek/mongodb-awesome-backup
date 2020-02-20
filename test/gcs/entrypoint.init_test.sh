@@ -1,9 +1,9 @@
 #!/bin/bash -e
 
-if [ -n "${GOOGLE_PROJECT_ID}" ] && [ -n "${GCP_SERVICE_ACCOUNT_KEY}" ]; then
+if [ -n "${GCP_PROJECT_ID}" ] && [ -n "${GCP_SERVICE_ACCOUNT_KEY}" ]; then
   # Using GCP service account authorization
   echo ${GCP_SERVICE_ACCOUNT_KEY} | gcloud auth activate-service-account --key-file=-
-  gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+  gcloud --quiet config set project ${GCP_PROJECT_ID}
 elif [ -n "${GCP_ACCESS_KEY_ID}" ] && [ -n "${GCP_SECRET_ACCESS_KEY}" ]; then
   # Using HMAC authorization
   # Expand all variables in "/tmp/.boto"
