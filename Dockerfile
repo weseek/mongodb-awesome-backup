@@ -6,9 +6,12 @@ RUN apk add --no-cache \
     coreutils \
     bash \
     tzdata \
-    python2 \
+    py2-pip \
     mongodb-tools \
     curl
+
+# install awscli
+RUN pip install awscli
 
 # install gcloud (also gsutil)
 ARG GCLOUD_URL=https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-245.0.0-linux-x86_64.tar.gz?hl=ja
