@@ -12,6 +12,7 @@ jobs:
       GCP_ACCESS_KEY_ID: ${{ secrets.GCP_ACCESS_KEY_ID }}
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       GCP_SECRET_ACCESS_KEY: ${{ secrets.GCP_SECRET_ACCESS_KEY }}
+      GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
       TARGET_BUCKET_URL_PREFIX: gs://staging.mongodb-awesome-backup.appspot.com/test
       # Match with the time zone of the mongodb-awesome-backup container.
       TZ: Asia/Tokyo
