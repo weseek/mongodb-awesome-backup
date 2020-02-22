@@ -130,12 +130,12 @@ Environment variables
 
 #### Required
 
-| Variable              | Description                          |                                                  |     |
-| --------------------- | ------------------------------------ | ------------------------------------------------ | --- |
-| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID               |                                                  |     |
-| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key           |                                                  |     |
-| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\        | gs://...]). **URL is needed to be end with '/'** |     |
-| TARGET_FILE           | Target S3 or GS file name to restore |                                                  |     |
+| Variable              | Description                                                                    |     |
+| --------------------- | ------------------------------------------------------------------------------ | --- |
+| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                         |     |
+| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                                     |     |
+| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'** |     |
+| TARGET_FILE           | Target S3 or GS file name to restore                                           |     |
 
 #### Optional
 
