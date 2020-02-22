@@ -102,50 +102,50 @@ Environment variables
 
 #### Required
 
-| Variable              | Description                  | Default                                         |
-| --------------------- | ---------------------------- | ----------------------------------------------- |
-| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID       |                                                 |
-| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key   |                                                 |
-| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'** |
+| Variable              | Description                                                                    | Default |
+| --------------------- | ------------------------------------------------------------------------------ | ------- |
+| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                         | -       |
+| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                                     | -       |
+| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'** | -       |
 
 #### Optional
 
-| Variable                | Description                                                                                                                                                                   | Default |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| GCP_SERVICE_ACCOUNT_KEY | Your GCP Service Account Key                                                                                                                                                  |         |
-| GCP_ACCESS_KEY_ID       | Your GCP Access Key                                                                                                                                                           |         |
-| GCP_SECRET_ACCESS_KEY   | Your GCP Secret                                                                                                                                                               |         |
-| GCP_PROJECT_ID          | Your GCP Project ID                                                                                                                                                           |         |
-| BACKUPFILE_PREFIX       | Prefix of Backup Filename                                                                                                                                                     | backup  |
-| MONGODB_HOST            | Target MongoDB Host                                                                                                                                                           | mongo   |
-| MONGODB_DBNAME          | Target DB name                                                                                                                                                                | -       |
-| MONGODB_USERNAME        | DB login username                                                                                                                                                             | -       |
-| MONGODB_PASSWORD        | DB login password                                                                                                                                                             | -       |
-| MONGODB_AUTHDB          | Authentication DB name                                                                                                                                                        | -       |
-| CRONMODE                | If set "true", this container is executed in cron mode.  In cron mode, the script will be executed with the specified arguments and at the time specified by CRON_EXPRESSION. | "false" |
-| CRON_EXPRESSION         | Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)                                                                                        | -       |
-| HEALTHCHECKS_URL        | URL that gets called after a successful backup (eg. https://healthchecks.io)                                                                                                  | -       |
+| Variable                | Description                                                                                                                                                                   | Default  |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| GCP_SERVICE_ACCOUNT_KEY | Your GCP Service Account Key                                                                                                                                                  | -        |
+| GCP_ACCESS_KEY_ID       | Your GCP Access Key                                                                                                                                                           | -        |
+| GCP_SECRET_ACCESS_KEY   | Your GCP Secret                                                                                                                                                               | -        |
+| GCP_PROJECT_ID          | Your GCP Project ID                                                                                                                                                           | -        |
+| BACKUPFILE_PREFIX       | Prefix of Backup Filename                                                                                                                                                     | "backup" |
+| MONGODB_HOST            | Target MongoDB Host                                                                                                                                                           | "mongo"  |
+| MONGODB_DBNAME          | Target DB name                                                                                                                                                                | -        |
+| MONGODB_USERNAME        | DB login username                                                                                                                                                             | -        |
+| MONGODB_PASSWORD        | DB login password                                                                                                                                                             | -        |
+| MONGODB_AUTHDB          | Authentication DB name                                                                                                                                                        | -        |
+| CRONMODE                | If set "true", this container is executed in cron mode.  In cron mode, the script will be executed with the specified arguments and at the time specified by CRON_EXPRESSION. | "false"  |
+| CRON_EXPRESSION         | Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)                                                                                        | -        |
+| HEALTHCHECKS_URL        | URL that gets called after a successful backup (eg. https://healthchecks.io)                                                                                                  | -        |
 
 ### For `restore`
 
 #### Required
 
-| Variable              | Description                                                                    |
-| --------------------- | ------------------------------------------------------------------------------ |
-| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                         |
-| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                                     |
-| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'** |
-| TARGET_FILE           | Target S3 or GS file name to restore                                           |
+| Variable              | Description                                                                    | Default |
+| --------------------- | ------------------------------------------------------------------------------ | ------- |
+| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID                                                         | -       |
+| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key                                                     | -       |
+| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'** | -       |
+| TARGET_FILE           | Target S3 or GS file name to restore                                           | -       |
 
 #### Optional
 
 | Variable                | Description                               | Default |
 | ----------------------- | ----------------------------------------- | ------- |
-| GCP_SERVICE_ACCOUNT_KEY | Your GCP Service Account Key              |         |
-| GCP_ACCESS_KEY_ID       | Your GCP Access Key                       |         |
-| GCP_SECRET_ACCESS_KEY   | Your GCP Secret                           |         |
-| GCP_PROJECT_ID          | Your GCP Project ID                       |         |
-| MONGODB_HOST            | Target MongoDB Host                       | mongo   |
+| GCP_SERVICE_ACCOUNT_KEY | Your GCP Service Account Key              | -       |
+| GCP_ACCESS_KEY_ID       | Your GCP Access Key                       | -       |
+| GCP_SECRET_ACCESS_KEY   | Your GCP Secret                           | -       |
+| GCP_PROJECT_ID          | Your GCP Project ID                       | -       |
+| MONGODB_HOST            | Target MongoDB Host                       | "mongo" |
 | MONGODB_DBNAME          | Target DB name                            | -       |
 | MONGODB_USERNAME        | DB login username                         | -       |
 | MONGODB_PASSWORD        | DB login password                         | -       |
