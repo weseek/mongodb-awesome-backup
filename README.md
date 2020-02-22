@@ -102,11 +102,11 @@ Environment variables
 
 #### Required
 
-| Variable              | Description                   | Default                                          |     |
-| --------------------- | ----------------------------- | ------------------------------------------------ | --- |
-| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID        |                                                  |     |
-| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key    |                                                  |     |
-| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\ | gs://...]). **URL is needed to be end with '/'** |     |
+| Variable              | Description                  | Default                                         |     |
+| --------------------- | ---------------------------- | ----------------------------------------------- | --- |
+| AWS_ACCESS_KEY_ID     | Your IAM Access Key ID       |                                                 |     |
+| AWS_SECRET_ACCESS_KEY | Your IAM Secret Access Key   |                                                 |     |
+| TARGET_BUCKET_URL     | Target Bucket URL ([s3://...\|gs://...]). **URL is needed to be end with '/'** |     |
 
 #### Optional
 
