@@ -15,6 +15,10 @@ jobs:
       TARGET_BUCKET_URL_PREFIX: gs://staging.mongodb-awesome-backup.appspot.com/test
       # Match with the time zone of the mongodb-awesome-backup container.
       TZ: Asia/Tokyo
+      # Slack notification
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      NOTIFY_MESSAGE: '${{ github.repository }} (${{ github.workflow }}): `${{ github.ref }}`@${{ github.actor }}'
 
     steps:
     - uses: actions/checkout@v2
@@ -28,10 +32,10 @@ jobs:
         test/all.sh
 
     - name: Slack Notification
-      uses: homoluctus/slatify@master
       if: always()
+      uses: innocarpe/actions-slack@v1
       with:
-        type: ${{ job.status }}
-        job_name: '*${{ github.workflow }}*'
-        url: ${{ secrets.SLACK_WEBHOOK_URL }}
-        channel: ${{ secrets.SLACK_CHANNEL }}
+        status: ${{ job.status }} # Required
+        success_text: '*Success* ${{ env.NOTIFY_MESSAGE }}'
+        failure_text: '*Fail* ${{ env.NOTIFY_MESSAGE }}'
+        cancelled_text: '*Cancelled* ${{ env.NOTIFY_MESSAGE }}'
