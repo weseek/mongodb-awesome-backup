@@ -5,11 +5,11 @@ AWSCLI_LIST_OPT="s3 ls"
 AWSCLI_DEL_OPT="s3 rm"
 AWSCLIOPT=${AWSCLIOPT:-}
 
-GCPCLI="/root/google-cloud-sdk/bin/gsutil"
-GCPCLI_COPY_OPT="cp"
-GCPCLI_LIST_OPT="ls"
-GCPCLI_DEL_OPT="rm"
-GCPCLIOPT=${GCPCLIOPT:-}
+GCSCLI="/root/google-cloud-sdk/bin/gsutil"
+GCSCLI_COPY_OPT="cp"
+GCSCLI_LIST_OPT="ls"
+GCSCLI_DEL_OPT="rm"
+GCSCLIOPT=${GCSCLIOPT:-}
 
 DATE_CMD="/bin/date"
 
@@ -23,7 +23,7 @@ s3_exists() {
 }
 gs_exists() {
 	if [ $# -ne 1 ]; then return 255; fi
-	${GCPCLI} ${GCPCLIOPT} ${GCPCLI_LIST_OPT} $1 >/dev/null
+	${GCSCLI} ${GCSCLIOPT} ${GCSCLI_LIST_OPT} $1 >/dev/null
 }
 
 # Output the list of the files on specified S3 URL.
@@ -32,7 +32,7 @@ s3_list_files() {
 	${AWSCLI} ${AWSCLIOPT} ${AWSCLI_LIST_OPT} $1
 }
 gs_list_files() {
-	${GCPCLI} ${GCPCLIOPT} ${GCPCLI_LIST_OPT} $1
+	${GCSCLI} ${GCSCLIOPT} ${GCSCLI_LIST_OPT} $1
 }
 
 # Delete the specified file.
@@ -43,7 +43,7 @@ s3_delete_file() {
 }
 gs_delete_file() {
 	if [ $# -ne 1 ]; then return 255; fi
-	${GCPCLI} ${GCPCLIOPT} ${GCPCLI_DEL_OPT} $1
+	${GCSCLI} ${GCSCLIOPT} ${GCSCLI_DEL_OPT} $1
 }
 
 # Copy the specified file.
@@ -61,7 +61,7 @@ s3_copy_file() {
 }
 gs_copy_file() {
 	if [ $# -ne 2 ]; then return 255; fi
-	${GCPCLI} ${GCPCLIOPT} ${GCPCLI_COPY_OPT} $1 $2
+	${GCSCLI} ${GCSCLIOPT} ${GCSCLI_COPY_OPT} $1 $2
 }
 
 # Create current datetime string(YYYYmmddHHMMSS)

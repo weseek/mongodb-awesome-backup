@@ -3,7 +3,7 @@ if [ "`echo $TARGET_BUCKET_URL | cut -f1 -d':'`" != "gs" ]; then
 	exit 0
 fi
 
-GCPCLI="/root/google-cloud-sdk/bin/gsutil"
+GCSCLI="/root/google-cloud-sdk/bin/gsutil"
 GCLOUDCLI="/root/google-cloud-sdk/bin/gcloud"
 MOUNT="/mab"
 
@@ -41,6 +41,6 @@ elif [ -f ${MOUNT}/.boto ]; then
 elif [ ! -f ${MOUNT}/.boto ]; then
   # Using interactive authorization
   if [ ! -d ${MOUNT} ]; then mkdir -p ${MOUNT}; fi
-  ${GCPCLI} config -o ${MOUNT}/.boto
+  ${GCSCLI} config -o ${MOUNT}/.boto
   cp ${MOUNT}/.boto /root/.boto
 fi
