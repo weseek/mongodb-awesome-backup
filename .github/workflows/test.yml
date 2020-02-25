@@ -27,7 +27,7 @@ jobs:
       run: |
         export GCP_SERVICE_ACCOUNT_KEY_JSON_PATH="$(pwd)/tmp/key.json"
         mkdir -p $(dirname ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH})
-        echo ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }} > ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
+        echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
 
     - name: Run integration tests
       run: |
