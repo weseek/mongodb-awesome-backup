@@ -7,9 +7,9 @@ GCSCLI="/root/google-cloud-sdk/bin/gsutil"
 GCLOUDCLI="/root/google-cloud-sdk/bin/gcloud"
 MOUNT="/mab"
 
-if [ -n "${GCP_PROJECT_ID}" ] && [ -n "${GCP_SERVICE_ACCOUNT_KEY}" ]; then
+if [ -n "${GCP_PROJECT_ID}" ] && [ -n "${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}" ]; then
   # Using GCP service account authorization
-  echo ${GCP_SERVICE_ACCOUNT_KEY} | ${GCLOUDCLI} auth activate-service-account --key-file=-
+  ${GCLOUDCLI} auth activate-service-account --key-file="${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}"
   ${GCLOUDCLI} --quiet config set project ${GCP_PROJECT_ID}
 elif [ -n "${GCP_ACCESS_KEY_ID}" ] && [ -n "${GCP_SECRET_ACCESS_KEY}" ]; then
   # Using HMAC authorization

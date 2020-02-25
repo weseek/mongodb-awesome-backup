@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-if [ -n "${GCP_PROJECT_ID}" ] && [ -n "${GCP_SERVICE_ACCOUNT_KEY}" ]; then
+if [ -n "${GCP_PROJECT_ID}" ] && [ -n "${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}" ]; then
   # Using GCP service account authorization
-  echo ${GCP_SERVICE_ACCOUNT_KEY} | gcloud auth activate-service-account --key-file=-
+  gcloud auth activate-service-account --key-file="${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}"
   gcloud --quiet config set project ${GCP_PROJECT_ID}
 elif [ -n "${GCP_ACCESS_KEY_ID}" ] && [ -n "${GCP_SECRET_ACCESS_KEY}" ]; then
   # Using HMAC authorization

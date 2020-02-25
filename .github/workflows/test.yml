@@ -12,7 +12,6 @@ jobs:
       GCP_ACCESS_KEY_ID: ${{ secrets.GCP_ACCESS_KEY_ID }}
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       GCP_SECRET_ACCESS_KEY: ${{ secrets.GCP_SECRET_ACCESS_KEY }}
-      GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
       TARGET_BUCKET_URL_PREFIX: gs://staging.mongodb-awesome-backup.appspot.com/test
       # Match with the time zone of the mongodb-awesome-backup container.
       TZ: Asia/Tokyo
@@ -23,6 +22,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Temporaly save service account key
+      run: |
+        export GCP_SERVICE_ACCOUNT_KEY_JSON_PATH="$(pwd)/tmp/key.json"
+        mkdir -p $(dirname ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH})
+        echo ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }} > ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
 
     - name: Run integration tests
       run: |
@@ -31,6 +36,10 @@ jobs:
         export TARGET_BUCKET_URL="${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
         
         test/all.sh
+
+    - name: Remove temporaly service account key
+      run: |
+        rm -f ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
 
     - name: Slack Notification
       if: always()

@@ -9,9 +9,11 @@ services:
       context: ../../
       dockerfile: Dockerfile
     environment: &base_env
-      GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
+      GCP_SERVICE_ACCOUNT_KEY_JSON_PATH: $GCP_SERVICE_ACCOUNT_KEY_JSON_PATH
       GCP_PROJECT_ID: $GCP_PROJECT_ID
       TARGET_BUCKET_URL: $TARGET_BUCKET_URL
+    volumes:
+      - $GCP_SERVICE_ACCOUNT_KEY_JSON_PATH:$GCP_SERVICE_ACCOUNT_KEY_JSON_PATH
 
   ### test for backup in cron mode
   app_backup_cronmode:
@@ -39,6 +41,7 @@ services:
       GCP_SECRET_ACCESS_KEY: $GCP_SECRET_ACCESS_KEY
       GCP_PROJECT_ID: $GCP_PROJECT_ID
       TARGET_BUCKET_URL: $TARGET_BUCKET_URL
+      GCP_SERVICE_ACCOUNT_KEY_JSON_PATH: ""
 
   ### test for backup in cron mode using HMAC authorization
   app_backup_cronmode_using_hmac_auth:
@@ -67,6 +70,7 @@ services:
       <<: *base_env
       GCP_ACCESS_KEY_ID: ""
       GCP_SECRET_ACCESS_KEY: ""
+      GCP_SERVICE_ACCOUNT_KEY_JSON_PATH: ""
 
   ### test for backup in cron mode with .boto file
   app_backup_cronmode_with_dot_boto:
@@ -95,6 +99,7 @@ services:
       <<: *base_env
     volumes:
       - config_datastore_hmac:/tmp
+      - $GCP_SERVICE_ACCOUNT_KEY_JSON_PATH:$GCP_SERVICE_ACCOUNT_KEY_JSON_PATH
     entrypoint:
       - dockerize
       - -wait
