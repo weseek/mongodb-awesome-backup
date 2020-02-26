@@ -42,7 +42,7 @@ jobs:
 
     - name: Remove temporaly service account key
       run: |
-        rm -f ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
+        rm -f ${{ steps.set_sa_key.outputs.json_path }}
 
     - name: Slack Notification
       if: always()
