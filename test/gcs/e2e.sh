@@ -166,23 +166,23 @@ if [ $SATISFY -ne 1 ]; then trap EXIT; exit 1; fi
 # Clean up bucket before start mongodb
 docker-compose down -v
 
-# Test default commands with HMAC/OAuth authentications
-TEST_SERVICES=("app_default" "app_with_dot_boto")
-INIT_BOTOS=("false" "true")
+# Test default commands with ServiceAccount/HMAC/OAuth authentications
+TEST_SERVICES=("app_default" "app_using_hmac_auth" "app_with_dot_boto")
+INIT_BOTOS=("false" "false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   execute_default_commands_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTOS[i]}
 }
 
-# Test default commands in cron mode with HMAC/OAuth authentications
-TEST_SERVICES=("app_backup_cronmode" "app_backup_cronmode_with_dot_boto")
-INIT_BOTOS=("false" "true")
+# Test default commands in cron mode with ServiceAccount/HMAC/OAuth authentications
+TEST_SERVICES=("app_backup_cronmode" "app_backup_cronmode_using_hmac_auth" "app_backup_cronmode_with_dot_boto")
+INIT_BOTOS=("false" "false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTOS[i]}
 }
 
-# Test restore command with HMAC/OAuth authentications
-TEST_SERVICES=("app_restore" "app_restore_with_dot_boto")
-INIT_BOTOS=("false" "true")
+# Test restore command with ServiceAccount/HMAC/OAuth authentications
+TEST_SERVICES=("app_restore" "app_restore_using_hmac_auth" "app_restore_with_dot_boto")
+INIT_BOTOS=("false" "false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   execute_restore_command_and_assert_dummy_record_exists_on_mongodb ${TEST_SERVICES[i]} ${INIT_BOTOS[i]}
 }
