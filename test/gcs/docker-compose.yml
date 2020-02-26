@@ -52,7 +52,7 @@ services:
       CRON_EXPRESSION: '* * * * *'
 
   ### test for restore using HMAC authorization
-  app_restore_with_dot_boto:
+  app_restore_using_hmac_auth:
     <<: *app_using_hmac_auth
     environment:
       <<: *using_hmac_auth_env
