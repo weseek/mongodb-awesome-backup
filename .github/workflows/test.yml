@@ -24,16 +24,19 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Temporaly save service account key
+      id: set_sa_key
       run: |
-        export GCP_SERVICE_ACCOUNT_KEY_JSON_PATH="$(pwd)/tmp/key.json"
+        GCP_SERVICE_ACCOUNT_KEY_JSON_PATH="$(pwd)/tmp/key.json"
         mkdir -p $(dirname ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH})
         echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
+        echo ::set-output name=json_path::${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
 
     - name: Run integration tests
       run: |
         # Set environment for integration tests
         BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
         export TARGET_BUCKET_URL="${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
+        export GCP_SERVICE_ACCOUNT_KEY_JSON_PATH="${{ steps.set_sa_key.outputs.json_path }}"
         
         test/all.sh
 
