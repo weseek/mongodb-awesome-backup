@@ -23,15 +23,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Temporaly save service account key
-      id: set_sa_key
+    - name: Set service account key path
       run: |
         echo ::set-env name=GCP_SERVICE_ACCOUNT_KEY_JSON_PATH::"$(pwd)/tmp/key.json"
-        mkdir -p $(dirname ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH})
-        echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
 
     - name: Run integration tests
       run: |
+        # Temporaly save service account key
+        mkdir -p $(dirname ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH})
+        echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
+
         # Set environment for integration tests
         BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
         export TARGET_BUCKET_URL="${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
@@ -40,7 +41,7 @@ jobs:
 
     - name: Remove temporaly service account key
       run: |
-        rm -f ${{ steps.set_sa_key.outputs.json_path }}
+        rm -f ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
 
     - name: Slack Notification
       if: always()
