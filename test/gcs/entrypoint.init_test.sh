@@ -9,7 +9,7 @@ elif [ -n "${GCP_ACCESS_KEY_ID}" ] && [ -n "${GCP_SECRET_ACCESS_KEY}" ]; then
   # Expand all variables in "/tmp/.boto"
   envsubst < /tmp/.boto > /root/.boto
 else
-  echo 'Can not authorizaed. You should set service account authorization or HMAC authorization.'
+  echo 'Error: set the variables for GCS authentication.' 1>&2
   exit 1
 fi
 

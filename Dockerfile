@@ -16,7 +16,7 @@ RUN pip install awscli
 # install gcloud (also gsutil)
 # ref: https://cloud.google.com/sdk/docs?hl=en#install_the_latest_cloud_tools_version_cloudsdk_current_version
 ARG CLOUD_SDK_VERSION=281.0.0
-ARG CLOUD_SDK_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz?hl=ja"
+ARG CLOUD_SDK_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz"
 RUN curl $CLOUD_SDK_URL | tar xz -C $HOME
 RUN $HOME/google-cloud-sdk/install.sh -q --path-update true
 
