@@ -1,7 +1,17 @@
 #!/bin/bash -e
 
-# Expand all variables in "/tmp/.boto"
-envsubst < /tmp/.boto > /root/.boto
+if [ -n "${GCP_PROJECT_ID}" ] && [ -n "${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}" ]; then
+  # Using GCP service account authorization
+  gcloud auth activate-service-account --key-file="${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}"
+  gcloud --quiet config set project ${GCP_PROJECT_ID}
+elif [ -n "${GCP_ACCESS_KEY_ID}" ] && [ -n "${GCP_SECRET_ACCESS_KEY}" ]; then
+  # Using HMAC authorization
+  # Expand all variables in "/tmp/.boto"
+  envsubst < /tmp/.boto > /root/.boto
+else
+  echo 'Error: set the variables for GCS authentication.' 1>&2
+  exit 1
+fi
 
 # REMOVE ALL OBJECTS in GCS bucket
 gsutil ls ${TARGET_BUCKET_URL}

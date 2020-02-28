@@ -152,7 +152,7 @@ TODAY=`/bin/date +%Y%m%d` # It is used to generate file name to restore
 echo "=== $0 started at `/bin/date "+%Y/%m/%d %H:%M:%S"` ==="
 
 # Validate environment variables
-REQUIRED_ENVS=("GCP_ACCESS_KEY_ID" "GCP_SECRET_ACCESS_KEY" "GCP_PROJECT_ID" "TARGET_BUCKET_URL")
+REQUIRED_ENVS=("GCP_SERVICE_ACCOUNT_KEY_JSON_PATH" "GCP_ACCESS_KEY_ID" "GCP_SECRET_ACCESS_KEY" "GCP_PROJECT_ID" "TARGET_BUCKET_URL")
 SATISFY=1
 for ((i = 0; i < ${#REQUIRED_ENVS[@]}; i++)) {
   ENV=$(eval echo "\$${REQUIRED_ENVS[i]}")
@@ -166,23 +166,23 @@ if [ $SATISFY -ne 1 ]; then trap EXIT; exit 1; fi
 # Clean up bucket before start mongodb
 docker-compose down -v
 
-# Test default commands with HMAC/OAuth authentications
-TEST_SERVICES=("app_default" "app_with_dot_boto")
-INIT_BOTOS=("false" "true")
+# Test default commands with ServiceAccount/HMAC/OAuth authentications
+TEST_SERVICES=("app_default" "app_using_hmac_auth" "app_with_dot_boto")
+INIT_BOTOS=("false" "false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   execute_default_commands_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTOS[i]}
 }
 
-# Test default commands in cron mode with HMAC/OAuth authentications
-TEST_SERVICES=("app_backup_cronmode" "app_backup_cronmode_with_dot_boto")
-INIT_BOTOS=("false" "true")
+# Test default commands in cron mode with ServiceAccount/HMAC/OAuth authentications
+TEST_SERVICES=("app_backup_cronmode" "app_backup_cronmode_using_hmac_auth" "app_backup_cronmode_with_dot_boto")
+INIT_BOTOS=("false" "false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   execute_default_command_in_cron_mode_and_assert_file_exists_on_gcs ${TEST_SERVICES[i]} ${INIT_BOTOS[i]}
 }
 
-# Test restore command with HMAC/OAuth authentications
-TEST_SERVICES=("app_restore" "app_restore_with_dot_boto")
-INIT_BOTOS=("false" "true")
+# Test restore command with ServiceAccount/HMAC/OAuth authentications
+TEST_SERVICES=("app_restore" "app_restore_using_hmac_auth" "app_restore_with_dot_boto")
+INIT_BOTOS=("false" "false" "true")
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   execute_restore_command_and_assert_dummy_record_exists_on_mongodb ${TEST_SERVICES[i]} ${INIT_BOTOS[i]}
 }

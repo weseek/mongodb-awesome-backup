@@ -22,14 +22,26 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Set service account key path
+      run: |
+        echo ::set-env name=GCP_SERVICE_ACCOUNT_KEY_JSON_PATH::"$(pwd)/tmp/key.json"
 
     - name: Run integration tests
       run: |
+        # Create a temporary service account key file
+        mkdir -p $(dirname ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH})
+        echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
+
         # Set environment for integration tests
         BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
         export TARGET_BUCKET_URL="${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
         
         test/all.sh
+
+    - name: Remove the temporary service account key file
+      run: |
+        rm -f ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
 
     - name: Slack Notification
       if: always()
