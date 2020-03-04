@@ -34,7 +34,7 @@ jobs:
           --cache-from type=registry,ref=${DOCKERHUB_REPOSITORY}
           --cache-to type=registry,ref=${DOCKERHUB_REPOSITORY},mode=max
           --push
-          ./.docker
+          .
 
   publish_description:
     runs-on: ubuntu-latest

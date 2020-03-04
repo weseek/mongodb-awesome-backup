@@ -37,7 +37,7 @@ jobs:
           --cache-from type=registry,ref=${DOCKERHUB_REPOSITORY}
           --cache-to type=registry,ref=${DOCKERHUB_REPOSITORY},mode=max
           --push
-          ./.docker
+          .
 
       - name: Tagging Docker Image by SemVer and publish
         uses: weseek/ghaction-docker-tags-by-semver@v1.0.5
