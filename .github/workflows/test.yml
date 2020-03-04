@@ -37,6 +37,8 @@ jobs:
         BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
         export TARGET_BUCKET_URL="${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
         
+        docker-compose -v
+        
         test/all.sh
 
     - name: Remove the temporary service account key file
