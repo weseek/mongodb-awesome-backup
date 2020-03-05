@@ -19,6 +19,8 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       NOTIFY_MESSAGE: '${{ github.repository }} (${{ github.workflow }}): `${{ github.ref }}`@${{ github.actor }}'
+      # docker-compose version (it need over version 1.25.0 to using BuildKit. see: https://github.com/docker/compose/releases/tag/1.25.0)
+      DOCKER_COMPOSE_VERSION: 1.25.3
 
     steps:
     - uses: actions/checkout@v2
@@ -26,6 +28,15 @@ jobs:
     - name: Set service account key path
       run: |
         echo ::set-env name=GCP_SERVICE_ACCOUNT_KEY_JSON_PATH::"$(pwd)/tmp/key.json"
+
+    - run:
+      name: Install Docker Compose
+      command: |
+        # ref: https://github.com/docker/compose/releases
+        curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose
+        echo PATH ${PATH}
+        echo "::add-path::/usr/local/bin/docker-compose"
 
     - name: Run integration tests
       run: |
@@ -36,9 +47,12 @@ jobs:
         # Set environment for integration tests
         BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
         export TARGET_BUCKET_URL="${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
-        
+
+        export DOCKER_BUILDKIT=1
+        export COMPOSE_DOCKER_CLI_BUILD=1
         docker-compose -v
-        
+        which docker-compose
+        echo PATH ${PATH}
         test/all.sh
 
     - name: Remove the temporary service account key file
