@@ -31,11 +31,14 @@ jobs:
 
     - name: Install Docker Compose
       run: |
+        DOCKER_COMPOSE_PATH="~/bin/docker-compose"
+        mkdir -p $(dirname ${DOCKER_COMPOSE_PATH})
+
         # ref: https://github.com/docker/compose/releases
-        sudo curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-        chmod +x /usr/local/bin/docker-compose
+        curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > ${DOCKER_COMPOSE_PATH}
+        chmod +x ${DOCKER_COMPOSE_PATH}
         echo PATH ${PATH}
-        echo "::add-path::/usr/local/bin/docker-compose"
+        echo "::add-path::${DOCKER_COMPOSE_PATH}"
 
     - name: Run integration tests
       run: |
