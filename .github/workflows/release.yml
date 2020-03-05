@@ -37,7 +37,7 @@ jobs:
           --cache-from type=registry,ref=${DOCKERHUB_REPOSITORY}
           --cache-to type=inline
           --output type=image,name=${DOCKERHUB_REPOSITORY},push=true
-          --opt build-arg:BUILDKIT_INLINE_CACHE=1
+          --build-arg BUILDKIT_INLINE_CACHE=1
           .
 
       - name: Tagging Docker Image by SemVer and publish
