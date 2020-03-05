@@ -25,15 +25,16 @@ jobs:
         run: >
           echo ${{ secrets.DOCKER_REGISTRY_PASSWORD }} |
           docker login --username ${{ secrets.DOCKER_REGISTRY_USERNAME }} --password-stdin
-  
+
       - name: Build and push latest Docker Image
         run: >
           docker buildx build
           --tag ${DOCKERHUB_REPOSITORY}
           --platform linux/amd64
           --cache-from type=registry,ref=${DOCKERHUB_REPOSITORY}
-          --cache-to type=registry,ref=${DOCKERHUB_REPOSITORY},mode=max
-          --push
+          --cache-to type=inline
+          --output type=image,name=${DOCKERHUB_REPOSITORY},push=true
+          --opt build-arg:BUILDKIT_INLINE_CACHE=1
           .
 
   publish_description:
