@@ -29,9 +29,8 @@ jobs:
       run: |
         echo ::set-env name=GCP_SERVICE_ACCOUNT_KEY_JSON_PATH::"$(pwd)/tmp/key.json"
 
-    - run:
-      name: Install Docker Compose
-      command: |
+    - name: Install Docker Compose
+      run: |
         # ref: https://github.com/docker/compose/releases
         curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
         chmod +x /usr/local/bin/docker-compose
