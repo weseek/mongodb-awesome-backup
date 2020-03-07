@@ -24,32 +24,33 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Set service account key path
-      run: |
-        echo ::set-env name=GCP_SERVICE_ACCOUNT_KEY_JSON_PATH::"$(pwd)/tmp/key.json"
 
     - name: Install Docker Compose
       run: |
         DOCKER_COMPOSE_PATH="~/bin/docker-compose"
         mkdir -p $(dirname ${DOCKER_COMPOSE_PATH})
 
-        # ref: https://github.com/docker/compose/releases
+        # Download docker-compose (ref: https://github.com/docker/compose/releases)
         curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > ${DOCKER_COMPOSE_PATH}
         chmod +x ${DOCKER_COMPOSE_PATH}
         echo PATH ${PATH}
         echo "::add-path::${DOCKER_COMPOSE_PATH}"
 
-    - name: Run integration tests
+    - name: Set service account key path and create a temporary service account key file
       run: |
-        # Create a temporary service account key file
+        GCP_SERVICE_ACCOUNT_KEY_JSON_PATH="$(pwd)/tmp/key.json"
+        echo ::set-env name=GCP_SERVICE_ACCOUNT_KEY_JSON_PATH::$GCP_SERVICE_ACCOUNT_KEY_JSON_PATH
+        
         mkdir -p $(dirname ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH})
         echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
 
-        # Set environment for integration tests
+    - name: Set environment for integration tests
+      run: |
         BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
-        export TARGET_BUCKET_URL="${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
+        echo ::set-env name=TARGET_BUCKET_URL::"${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
 
+    - name: Run integration tests
+      run: |
         export DOCKER_BUILDKIT=1
         export COMPOSE_DOCKER_CLI_BUILD=1
         docker-compose -v
