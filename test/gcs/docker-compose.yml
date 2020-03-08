@@ -8,7 +8,6 @@ services:
     build:
       context: ../../
       dockerfile: Dockerfile
-
     environment: &base_env
       GCP_SERVICE_ACCOUNT_KEY_JSON_PATH: $GCP_SERVICE_ACCOUNT_KEY_JSON_PATH
       GCP_PROJECT_ID: $GCP_PROJECT_ID

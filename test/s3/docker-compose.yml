@@ -7,7 +7,6 @@ services:
     build:
       context: ../../
       dockerfile: Dockerfile
-
     environment: &base_env
       AWS_ACCESS_KEY_ID: testid
       AWS_SECRET_ACCESS_KEY: testkey
