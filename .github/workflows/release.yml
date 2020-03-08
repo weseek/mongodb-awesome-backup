@@ -5,7 +5,7 @@ on:
     types: [published]
 
 env:
-  DOCKERHUB_REPOSITORY: ryu310/mongodb-awesome-backup
+  DOCKERHUB_REPOSITORY: weseek/mongodb-awesome-backup
 
 jobs:
   release:

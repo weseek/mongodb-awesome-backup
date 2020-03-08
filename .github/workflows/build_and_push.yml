@@ -1,13 +1,12 @@
 name: Build and push Docker Image
 
-# on: 
-#   push:
-#     branches:
-#       - master
-on: [push]
+on: 
+  push:
+    branches:
+      - master
 
 env:
-  DOCKERHUB_REPOSITORY: ryu310/mongodb-awesome-backup
+  DOCKERHUB_REPOSITORY: weseek/mongodb-awesome-backup
 
 jobs:
   build_and_push:

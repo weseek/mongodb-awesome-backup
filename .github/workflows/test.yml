@@ -24,7 +24,7 @@ jobs:
       # Use cache on docker-compose building
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
-      DOCKER_COMPOSE_CACHE_FROM: ryu310/mongodb-awesome-backup
+      DOCKER_COMPOSE_CACHE_FROM: weseek/mongodb-awesome-backup
 
     steps:
     - uses: actions/checkout@v2
@@ -34,10 +34,10 @@ jobs:
         DOCKER_COMPOSE_PATH="$(pwd)/bin/docker-compose"
         mkdir -p $(dirname ${DOCKER_COMPOSE_PATH})
 
-        # Download docker-compose (ref: https://github.com/docker/compose/releases)
+        # Download docker-compose and add path(ref: https://github.com/docker/compose/releases)
         curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` -o ${DOCKER_COMPOSE_PATH}
         chmod +x ${DOCKER_COMPOSE_PATH}
-        echo PATH ${PATH}
+        ${DOCKER_COMPOSE_PATH} -v
         echo "::add-path::$(dirname ${DOCKER_COMPOSE_PATH})"
 
     - name: Set service account key path and create a temporary service account key file
@@ -55,10 +55,6 @@ jobs:
 
     - name: Run integration tests
       run: |
-        ls -al ./bin
-        docker-compose -v
-        which docker-compose
-        echo PATH ${PATH}
         test/all.sh
 
     - name: Remove the temporary service account key file
