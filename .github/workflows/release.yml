@@ -35,8 +35,8 @@ jobs:
           --tag ${DOCKERHUB_REPOSITORY}
           --platform linux/amd64
           --cache-from type=registry,ref=${DOCKERHUB_REPOSITORY}
-          --cache-to type=registry,ref=${DOCKERHUB_REPOSITORY}
-          --output type=image,name=${DOCKERHUB_REPOSITORY},push=true
+          --cache-to type=inine
+          --push
           .
 
       - name: Tagging Docker Image by SemVer and publish
