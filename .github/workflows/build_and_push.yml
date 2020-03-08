@@ -32,7 +32,7 @@ jobs:
           --tag ${DOCKERHUB_REPOSITORY}
           --platform linux/amd64
           --cache-from type=registry,ref=${DOCKERHUB_REPOSITORY}
-          --cache-to type=inine
+          --cache-to type=inline
           --push
           .
 
