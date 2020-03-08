@@ -22,6 +22,8 @@ jobs:
       # docker-compose version (it need over version 1.25.0 to using BuildKit. see: https://github.com/docker/compose/releases/tag/1.25.0)
       DOCKER_COMPOSE_VERSION: 1.25.3
       # Use cache on docker-compose building
+      DOCKER_BUILDKIT: 1
+      COMPOSE_DOCKER_CLI_BUILD: 1
       DOCKER_COMPOSE_CACHE_FROM: ryu310/mongodb-awesome-backup
 
     steps:
@@ -53,9 +55,6 @@ jobs:
 
     - name: Run integration tests
       run: |
-        export DOCKER_BUILDKIT=1
-        export COMPOSE_DOCKER_CLI_BUILD=1
-        export DOCKER_COMPOSE_CACHE_FROM=${}
         docker-compose -v
         which docker-compose
         echo PATH ${PATH}
