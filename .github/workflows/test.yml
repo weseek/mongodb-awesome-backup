@@ -19,42 +19,24 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       NOTIFY_MESSAGE: '${{ github.repository }} (${{ github.workflow }}): `${{ github.ref }}`@${{ github.actor }}'
-      # docker-compose version (it need over version 1.25.0 to using BuildKit. see: https://github.com/docker/compose/releases/tag/1.25.0)
-      DOCKER_COMPOSE_VERSION: 1.25.3
-      # Use cache on docker-compose building
-      DOCKER_BUILDKIT: 1
-      COMPOSE_DOCKER_CLI_BUILD: 1
-      DOCKER_COMPOSE_CACHE_FROM: weseek/mongodb-awesome-backup
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Install Docker Compose
+    
+    - name: Set service account key path
       run: |
-        DOCKER_COMPOSE_PATH="$(pwd)/bin/docker-compose"
-        mkdir -p $(dirname ${DOCKER_COMPOSE_PATH})
-
-        # Download docker-compose and add path(ref: https://github.com/docker/compose/releases)
-        curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` -o ${DOCKER_COMPOSE_PATH}
-        chmod +x ${DOCKER_COMPOSE_PATH}
-        ${DOCKER_COMPOSE_PATH} -v
-        echo "::add-path::$(dirname ${DOCKER_COMPOSE_PATH})"
-
-    - name: Set service account key path and create a temporary service account key file
-      run: |
-        GCP_SERVICE_ACCOUNT_KEY_JSON_PATH="$(pwd)/tmp/key.json"
-        echo ::set-env name=GCP_SERVICE_ACCOUNT_KEY_JSON_PATH::$GCP_SERVICE_ACCOUNT_KEY_JSON_PATH
-        
-        mkdir -p $(dirname ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH})
-        echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
-
-    - name: Set environment for integration tests
-      run: |
-        BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
-        echo ::set-env name=TARGET_BUCKET_URL::"${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
+        echo ::set-env name=GCP_SERVICE_ACCOUNT_KEY_JSON_PATH::"$(pwd)/tmp/key.json"
 
     - name: Run integration tests
       run: |
+        # Create a temporary service account key file
+        mkdir -p $(dirname ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH})
+        echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > ${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}
+
+        # Set environment for integration tests
+        BUCKET_NAME_PREFIX=`echo $GITHUB_REPOSITORY | tr '/' '_'`
+        export TARGET_BUCKET_URL="${TARGET_BUCKET_URL_PREFIX}/${BUCKET_NAME_PREFIX}_${GITHUB_RUN_ID}/"
+        
         test/all.sh
 
     - name: Remove the temporary service account key file

@@ -1,5 +1,5 @@
 # This file would be executed from e2e.sh
-version: '3.2'
+version: '3'
 
 services:
   # test for backup in command mode
@@ -7,8 +7,6 @@ services:
     build:
       context: ../../
       dockerfile: Dockerfile
-      cache_from:
-        - $DOCKER_COMPOSE_CACHE_FROM
 
     environment: &base_env
       AWS_ACCESS_KEY_ID: testid

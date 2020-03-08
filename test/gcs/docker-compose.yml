@@ -1,5 +1,5 @@
 # This file would be executed from e2e.sh
-version: '3.2'
+version: '3'
 
 services:
   # Service account authorization
@@ -8,8 +8,6 @@ services:
     build:
       context: ../../
       dockerfile: Dockerfile
-      cache_from:
-        - $DOCKER_COMPOSE_CACHE_FROM
 
     environment: &base_env
       GCP_SERVICE_ACCOUNT_KEY_JSON_PATH: $GCP_SERVICE_ACCOUNT_KEY_JSON_PATH
