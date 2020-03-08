@@ -55,6 +55,7 @@ jobs:
 
     - name: Run integration tests
       run: |
+        ls -al ~/bin
         docker-compose -v
         which docker-compose
         echo PATH ${PATH}
