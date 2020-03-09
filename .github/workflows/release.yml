@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+env:
+  DOCKERHUB_REPOSITORY: weseek/mongodb-awesome-backup
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get SemVer
+        run: |
+          SEMVER=`git tag | sed -E 's/^v//'`
+          echo ::set-env name=SEMVER::$SEMVER
+
+      - name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v1.0.4
+        with:
+          version: v0.3.1
+
+      - name: Login to docker.io registry
+        run: >
+          echo ${{ secrets.DOCKER_REGISTRY_PASSWORD }} |
+          docker login --username ${{ secrets.DOCKER_REGISTRY_USERNAME }} --password-stdin
+
+      - name: Build and push latest Docker Image
+        run: >
+          docker buildx build
+          --tag ${DOCKERHUB_REPOSITORY}
+          --platform linux/amd64
+          --cache-from type=registry,ref=${DOCKERHUB_REPOSITORY}
+          --cache-to type=inline
+          --push
+          .
+
+      - name: Tagging Docker Image by SemVer and publish
+        uses: weseek/ghaction-docker-tags-by-semver@v1.0.5
+        with:
+          source: ${{ env.DOCKERHUB_REPOSITORY }}
+          target: ${{ env.DOCKERHUB_REPOSITORY }}
+          semver: ${{ env.SEMVER }}
+          publish: true
