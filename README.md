@@ -4,6 +4,7 @@ What is mongodb-awesome-backup?
 -------------------------------
 
 mongodb-awesome-backup is the collection of scripts which backup MongoDB databases to Amazon S3 or Google Cloud Storage.
+You can set a custom s3 endpoint to use s3 based services like DigitalOcean Spaces instead of Amazon S3.
 
 
 Requirements
@@ -124,6 +125,7 @@ Environment variables
 | MONGODB_AUTHDB                    | Authentication DB name                                                                                                                                                        | -        |
 | CRONMODE                          | If set "true", this container is executed in cron mode.  In cron mode, the script will be executed with the specified arguments and at the time specified by CRON_EXPRESSION. | "false"  |
 | CRON_EXPRESSION                   | Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)                                                                                        | -        |
+| AWSCLI_ENDPOINT_URL_OPTION        | Set a custom s3 endpoint if you use a s3 based service like DigitalOcean Spaces. (ex. AWSCLI_ENDPOINT_URL_OPTION="fra1.digitaloceanspaces.com") If not set the Amazon S3 standard endpoint will be used. | -        |
 | HEALTHCHECKS_URL                  | URL that gets called after a successful backup (eg. https://healthchecks.io)                                                                                                  | -        |
 
 ### For `restore`
@@ -151,3 +153,4 @@ Environment variables
 | MONGODB_PASSWORD                  | DB login password                              | -       |
 | MONGODB_AUTHDB                    | Authentication DB name                         | -       |
 | MONGORESTORE_OPTS                 | Options list of mongorestore. (ex --drop)      | -       |
+| AWSCLI_ENDPOINT_URL_OPTION        | Set a custom s3 endpoint if you use a s3 based service like DigitalOcean Spaces. (ex. AWSCLI_ENDPOINT_URL_OPTION="fra1.digitaloceanspaces.com") If not set the Amazon S3 standard endpoint will be used. | -        |
