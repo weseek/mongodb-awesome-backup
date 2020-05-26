@@ -1,6 +1,6 @@
 # default settings
 AWSCLI="/usr/bin/aws"
-AWSCLI_ENDPOINT_URL_OPTION="--endpoint-url https://obs.eu-de.otc.t-systems.com"
+#AWSCLI_ENDPOINT_URL_OPTION="--endpoint-url <YourEndpointUrl>"
 AWSCLI_COPY_OPT="s3 cp"
 AWSCLI_LIST_OPT="s3 ls"
 AWSCLI_DEL_OPT="s3 rm"
