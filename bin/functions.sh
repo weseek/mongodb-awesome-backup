@@ -1,6 +1,5 @@
 # default settings
 AWSCLI="/usr/bin/aws"
-#AWSCLI_ENDPOINT_OPT="--endpoint-url <YourEndpointUrl>"
 AWSCLI_COPY_OPT="s3 cp"
 AWSCLI_LIST_OPT="s3 ls"
 AWSCLI_DEL_OPT="s3 rm"
