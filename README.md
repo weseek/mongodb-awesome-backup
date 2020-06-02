@@ -40,6 +40,7 @@ docker run --rm \
   [ -e MONGODB_USERNAME=<DB login username> \ ]
   [ -e MONGODB_PASSWORD=<DB login password> \ ]
   [ -e MONGODB_AUTHDB=<Authentication DB name> \ ]
+  [ -e AWSCLI_ENDPOINT_OPT=<S3 endpoint URL (ex. https://fra1.digitaloceanspaces.com)> \ ]
   [ -v ~:/mab \ ]
   weseek/mongodb-awesome-backup
 ```
@@ -67,6 +68,7 @@ docker run --rm \
   [ -e MONGODB_USERNAME=<DB login username> \ ]
   [ -e MONGODB_PASSWORD=<DB login password> \ ]
   [ -e MONGODB_AUTHDB=<Authentication DB name> \ ]
+  [ -e AWSCLI_ENDPOINT_OPT=<S3 endpoint URL (ex. https://fra1.digitaloceanspaces.com)> \ ]
   [ -v ~:/mab \ ]
   weseek/mongodb-awesome-backup
 ```
@@ -91,6 +93,7 @@ docker run --rm \
   [ -e MONGODB_PASSWORD=<DB login password> \ ]
   [ -e MONGODB_AUTHDB=<Authentication DB name> \ ] 
   [ -e MONGORESTORE_OPTS=<Options list of mongorestore> \ ]
+  [ -e AWSCLI_ENDPOINT_OPT=<S3 endpoint URL (ex. https://fra1.digitaloceanspaces.com)> \ ]
   [ -v ~:/mab \ ]
   weseek/mongodb-awesome-backup restore
 ```
@@ -125,7 +128,7 @@ Environment variables
 | MONGODB_AUTHDB                    | Authentication DB name                                                                                                                                                        | -        |
 | CRONMODE                          | If set "true", this container is executed in cron mode.  In cron mode, the script will be executed with the specified arguments and at the time specified by CRON_EXPRESSION. | "false"  |
 | CRON_EXPRESSION                   | Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)                                                                                        | -        |
-| AWSCLI_ENDPOINT_OPT               | Set a custom S3 endpoint if you use a S3 based service like DigitalOcean Spaces. (ex. AWSCLI_ENDPOINT_OPT="fra1.digitaloceanspaces.com") If not set the Amazon S3 standard endpoint will be used. | -        |
+| AWSCLI_ENDPOINT_OPT               | Set a custom S3 endpoint if you use a S3 based service like DigitalOcean Spaces. (ex. AWSCLI_ENDPOINT_OPT="https://fra1.digitaloceanspaces.com") If not set the Amazon S3 standard endpoint will be used. | -        |
 | HEALTHCHECKS_URL                  | URL that gets called after a successful backup (eg. https://healthchecks.io)                                                                                                  | -        |
 
 ### For `restore`
@@ -153,4 +156,4 @@ Environment variables
 | MONGODB_PASSWORD                  | DB login password                              | -       |
 | MONGODB_AUTHDB                    | Authentication DB name                         | -       |
 | MONGORESTORE_OPTS                 | Options list of mongorestore. (ex --drop)      | -       |
-| AWSCLI_ENDPOINT_OPT               | Set a custom S3 endpoint if you use a S3 based service like DigitalOcean Spaces. (ex. AWSCLI_ENDPOINT_OPT="fra1.digitaloceanspaces.com") If not set the Amazon S3 standard endpoint will be used. | -        |
+| AWSCLI_ENDPOINT_OPT               | Set a custom S3 endpoint if you use a S3 based service like DigitalOcean Spaces. (ex. AWSCLI_ENDPOINT_OPT="https://fra1.digitaloceanspaces.com") If not set the Amazon S3 standard endpoint will be used. | -        |
