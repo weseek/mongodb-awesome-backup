@@ -20,7 +20,7 @@ DATE_CMD="/bin/date"
 # arguments: 1. s3 url (s3://.../...)
 s3_exists() {
 	if [ $# -ne 1 ]; then return 255; fi
-		${AWSCLI} ${AWSCLI_ENDPOINT_OPT} ${AWSCLIOPT} ${AWSCLI_LIST_OPT} $1 >/dev/null
+	${AWSCLI} ${AWSCLI_ENDPOINT_OPT} ${AWSCLIOPT} ${AWSCLI_LIST_OPT} $1 >/dev/null
 }
 gs_exists() {
 	if [ $# -ne 1 ]; then return 255; fi
@@ -40,7 +40,7 @@ gs_list_files() {
 # arguments: 1. s3 url (s3://.../...)
 s3_delete_file() {
 	if [ $# -ne 1 ]; then return 255; fi
-		${AWSCLI} ${AWSCLI_ENDPOINT_OPT} ${AWSCLIOPT} ${AWSCLI_DEL_OPT} $1
+	${AWSCLI} ${AWSCLI_ENDPOINT_OPT} ${AWSCLIOPT} ${AWSCLI_DEL_OPT} $1
 }
 gs_delete_file() {
 	if [ $# -ne 1 ]; then return 255; fi
@@ -58,7 +58,7 @@ gs_delete_file() {
 #            2. target s3 url (s3://...)
 s3_copy_file() {
 	if [ $# -ne 2 ]; then return 255; fi
-		${AWSCLI} ${AWSCLI_ENDPOINT_OPT} ${AWSCLIOPT} ${AWSCLI_COPY_OPT} $1 $2
+	${AWSCLI} ${AWSCLI_ENDPOINT_OPT} ${AWSCLIOPT} ${AWSCLI_COPY_OPT} $1 $2
 }
 gs_copy_file() {
 	if [ $# -ne 2 ]; then return 255; fi
