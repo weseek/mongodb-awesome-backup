@@ -46,15 +46,20 @@ time ${TAR_CMD} ${TAR_OPTS} ${TARBALL_FULLPATH} -C ${DIRNAME} ${BASENAME}
 
 
 # restore database
-if [ "x${MONGODB_DBNAME}" != "x" ]; then
-  MONGORESTORE_OPTS="${MONGORESTORE_OPTS} -d ${MONGODB_DBNAME}"
-  TARGET=${TARGET}/${MONGODB_DBNAME}
-fi
-if [ "x${MONGODB_USERNAME}" != "x" ]; then
-  MONGORESTORE_OPTS="${MONGORESTORE_OPTS} -u ${MONGODB_USERNAME} -p ${MONGODB_PASSWORD}"
-fi
-if [ "x${MONGODB_AUTHDB}" != "x" ]; then
-  MONGORESTORE_OPTS="${MONGORESTORE_OPTS} --authenticationDatabase ${MONGODB_AUTHDB}"
+if [ "x${MONGODB_URI}" != "x" ]; then
+  MONGORESTORE_OPTS="--uri=${MONGODB_URI} ${MONGORESTORE_OPTS}"
+else
+  if [ "x${MONGODB_DBNAME}" != "x" ]; then
+    MONGORESTORE_OPTS="${MONGORESTORE_OPTS} -d ${MONGODB_DBNAME}"
+    TARGET=${TARGET}/${MONGODB_DBNAME}
+  fi
+  if [ "x${MONGODB_USERNAME}" != "x" ]; then
+    MONGORESTORE_OPTS="${MONGORESTORE_OPTS} -u ${MONGODB_USERNAME} -p ${MONGODB_PASSWORD}"
+  fi
+  if [ "x${MONGODB_AUTHDB}" != "x" ]; then
+    MONGORESTORE_OPTS="${MONGORESTORE_OPTS} --authenticationDatabase ${MONGODB_AUTHDB}"
+  fi
+  MONGORESTORE_OPTS="-h ${MONGODB_HOST} -v ${TARGET} ${MONGORESTORE_OPTS}"
 fi
 echo "restore MongoDB..."
-mongorestore -h ${MONGODB_HOST} -v ${TARGET} ${MONGORESTORE_OPTS}
+mongorestore ${MONGORESTORE_OPTS}
