@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
 # Create buckets
-/usr/bin/aws --endpoint-url=http://s3proxy:80/ s3 mb s3://app_default 
+/usr/bin/aws --endpoint-url=http://s3proxy:80/ s3 mb s3://app_default
+/usr/bin/aws --endpoint-url=http://s3proxy:80/ s3 mb s3://app_mongodb_uri
 /usr/bin/aws --endpoint-url=http://s3proxy:80/ s3 mb s3://app_backup_cronmode
 /usr/bin/aws --endpoint-url=http://s3proxy:80/ s3 mb s3://app_restore
 

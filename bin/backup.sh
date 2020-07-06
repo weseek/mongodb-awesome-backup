@@ -58,10 +58,10 @@ else
   if [ "x${MONGODB_AUTHDB}" != "x" ]; then
     MONGODUMP_OPTS="${MONGODUMP_OPTS} --authenticationDatabase ${MONGODB_AUTHDB}"
   fi
-  MONGODUMP_OPTS="-h ${MONGODB_HOST} -o ${TARGET} ${MONGODUMP_OPTS}"
+  MONGODUMP_OPTS="-h ${MONGODB_HOST} ${MONGODUMP_OPTS}"
 fi
 echo "dump MongoDB..."
-mongodump ${MONGODUMP_OPTS}
+mongodump -o ${TARGET} ${MONGODUMP_OPTS}
 
 # run tar command
 echo "backup ${TARGET}..."

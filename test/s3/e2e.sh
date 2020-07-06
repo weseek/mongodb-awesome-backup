@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xe
 # End to end test script
 
 # handle exit and clean up containers
@@ -48,6 +48,18 @@ docker-compose down -v
 docker-compose up --build s3proxy mongo &
 sleep 3 # wait for the network of docker-compose to be ready
 docker-compose up --build init
+
+# Test default commands with ServiceAccount/HMAC/OAuth authentications
+TEST_SERVICES=("app_default" "app_mongodb_uri")
+for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
+  # Execute app_default
+  docker-compose up --build ${TEST_SERVICES[i]}
+  # Expect for app_default
+  # Use wildcard since the time field of the filename is changed frequently.
+  assert_file_exists_on_s3 "${TEST_SERVICES[i]}/backup-${TODAY}*.tar.bz2"
+  # Exit test for app_default
+  echo "Finished test for ${TEST_SERVICES[i]}: OK"
+}
 
 # Execute app_default
 docker-compose up --build app_default

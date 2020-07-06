@@ -32,6 +32,14 @@ services:
     command:
       - restore
 
+  # test for backup in command mode using "MONGODB_URI" environment variable
+  app_mongodb_uri: &app_mongodb_uri
+    <<: *app_default
+    environment:
+      <<: *base_env
+      TARGET_BUCKET_URL: s3://app_mongodb_uri/
+      MONGODB_URI: mongodb://mongo/
+
   # backup target (empty)
   mongo:
     image: mongo:3.4
