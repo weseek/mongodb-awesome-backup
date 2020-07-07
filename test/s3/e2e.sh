@@ -61,7 +61,10 @@ for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   echo "Finished test for ${TEST_SERVICES[i]}: OK"
 }
 
-TEST_SERVICES=("app_restore" "app_restore_mongodb_uri" "app_restore_mongodb_uri_mongodb_dbname")
+TEST_SERVICES=(
+  "app_restore" "app_restore_mongodb_dbname" "app_restore_mongodb_uri"
+  "app_restore_mongodb_uri_mongodb_dbname"
+)
 for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   # Execute
   docker-compose up --build ${TEST_SERVICES[i]}
