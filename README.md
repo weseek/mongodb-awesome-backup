@@ -35,6 +35,7 @@ docker run --rm \
   [ -e GCP_PROJECT_ID=<Your GCP Project ID> \ ]
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   [ -e BACKUPFILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
+  [ -e MONGODB_URI=<Target MongoDB URI> \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
   [ -e MONGODB_USERNAME=<DB login username> \ ]
@@ -63,6 +64,7 @@ docker run --rm \
   -e CRONMODE=true \
   -e CRON_EXPRESSION=<Cron expression (ex. "CRON_EXPRESSION='0 4 * * *'" if you want to run at 4:00 every day)> \
   [ -e BACKUPFILE_PREFIX=<Prefix of Backup Filename (default: "backup") \ ]
+  [ -e MONGODB_URI=<Target MongoDB URI> \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
   [ -e MONGODB_USERNAME=<DB login username> \ ]
@@ -87,11 +89,12 @@ docker run --rm \
   [ -e GCP_PROJECT_ID=<Your GCP Project ID> \ ]
   -e TARGET_BUCKET_URL=<Target Bucket URL ([s3://...|gs://...])> \
   -e TARGET_FILE=<Target S3 or GS file name to restore> \
+  [ -e MONGODB_URI=<Target MongoDB URI> \ ]
   [ -e MONGODB_HOST=<Target MongoDB Host (default: "mongo")> \ ]
   [ -e MONGODB_DBNAME=<Target DB name> \ ]
   [ -e MONGODB_USERNAME=<DB login username> \ ]
   [ -e MONGODB_PASSWORD=<DB login password> \ ]
-  [ -e MONGODB_AUTHDB=<Authentication DB name> \ ] 
+  [ -e MONGODB_AUTHDB=<Authentication DB name> \ ]
   [ -e MONGORESTORE_OPTS=<Options list of mongorestore> \ ]
   [ -e AWSCLI_ENDPOINT_OPT=<S3 endpoint URL (ex. https://fra1.digitaloceanspaces.com)> \ ]
   [ -v ~:/mab \ ]
@@ -114,22 +117,26 @@ Environment variables
 
 #### Optional
 
-| Variable                          | Description                                                                                                                                                                   | Default  |
-| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| GCP_SERVICE_ACCOUNT_KEY_JSON_PATH | JSON file path to your GCP Service Account Key                                                                                                                                | -        |
-| GCP_ACCESS_KEY_ID                 | Your GCP Access Key                                                                                                                                                           | -        |
-| GCP_SECRET_ACCESS_KEY             | Your GCP Secret                                                                                                                                                               | -        |
-| GCP_PROJECT_ID                    | Your GCP Project ID                                                                                                                                                           | -        |
-| BACKUPFILE_PREFIX                 | Prefix of Backup Filename                                                                                                                                                     | "backup" |
-| MONGODB_HOST                      | Target MongoDB Host                                                                                                                                                           | "mongo"  |
-| MONGODB_DBNAME                    | Target DB name                                                                                                                                                                | -        |
-| MONGODB_USERNAME                  | DB login username                                                                                                                                                             | -        |
-| MONGODB_PASSWORD                  | DB login password                                                                                                                                                             | -        |
-| MONGODB_AUTHDB                    | Authentication DB name                                                                                                                                                        | -        |
-| CRONMODE                          | If set "true", this container is executed in cron mode.  In cron mode, the script will be executed with the specified arguments and at the time specified by CRON_EXPRESSION. | "false"  |
-| CRON_EXPRESSION                   | Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)                                                                                        | -        |
+| Variable                          | Description                                                                                                                                                                                               | Default  |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| GCP_SERVICE_ACCOUNT_KEY_JSON_PATH | JSON file path to your GCP Service Account Key                                                                                                                                                            | -        |
+| GCP_ACCESS_KEY_ID                 | Your GCP Access Key                                                                                                                                                                                       | -        |
+| GCP_SECRET_ACCESS_KEY             | Your GCP Secret                                                                                                                                                                                           | -        |
+| GCP_PROJECT_ID                    | Your GCP Project ID                                                                                                                                                                                       | -        |
+| BACKUPFILE_PREFIX                 | Prefix of Backup Filename                                                                                                                                                                                 | "backup" |
+| MONGODB_URI                       | Target MongoDB URI (ex. `mongodb://mongodb?replicaSet=rs0`). If set, the other `MONGODB_*` variables will be ignored.                                                                                     | -        |
+| MONGODB_HOST                      | Target MongoDB Host                                                                                                                                                                                       | "mongo"  |
+| MONGODB_DBNAME                    | Target DB name                                                                                                                                                                                            | -        |
+| MONGODB_USERNAME                  | DB login username                                                                                                                                                                                         | -        |
+| MONGODB_PASSWORD                  | DB login password                                                                                                                                                                                         | -        |
+| MONGODB_AUTHDB                    | Authentication DB name                                                                                                                                                                                    | -        |
+| CRONMODE                          | If set "true", this container is executed in cron mode.  In cron mode, the script will be executed with the specified arguments and at the time specified by CRON_EXPRESSION.                             | "false"  |
+| CRON_EXPRESSION                   | Cron expression (ex. "CRON_EXPRESSION=0 4 * * *" if you want to run at 4:00 every day)                                                                                                                    | -        |
 | AWSCLI_ENDPOINT_OPT               | Set a custom S3 endpoint if you use a S3 based service like DigitalOcean Spaces. (ex. AWSCLI_ENDPOINT_OPT="https://fra1.digitaloceanspaces.com") If not set the Amazon S3 standard endpoint will be used. | -        |
-| HEALTHCHECKS_URL                  | URL that gets called after a successful backup (eg. https://healthchecks.io)                                                                                                  | -        |
+| AWSCLIOPT                         | Other options you want to pass to `aws` command                                                                                                                                                           | -        |
+| GCSCLIOPT                         | Other options you want to pass to `gsutil` command                                                                                                                                                        | -        |
+| HEALTHCHECKS_URL                  | URL that gets called after a successful backup (eg. https://healthchecks.io)                                                                                                                              | -        |
+
 
 ### For `restore`
 
@@ -144,16 +151,19 @@ Environment variables
 
 #### Optional
 
-| Variable                          | Description                                    | Default |
-| --------------------------------- | ---------------------------------------------- | ------- |
-| GCP_SERVICE_ACCOUNT_KEY_JSON_PATH | JSON file path to your GCP Service Account Key | -       |
-| GCP_ACCESS_KEY_ID                 | Your GCP Access Key                            | -       |
-| GCP_SECRET_ACCESS_KEY             | Your GCP Secret                                | -       |
-| GCP_PROJECT_ID                    | Your GCP Project ID                            | -       |
-| MONGODB_HOST                      | Target MongoDB Host                            | "mongo" |
-| MONGODB_DBNAME                    | Target DB name                                 | -       |
-| MONGODB_USERNAME                  | DB login username                              | -       |
-| MONGODB_PASSWORD                  | DB login password                              | -       |
-| MONGODB_AUTHDB                    | Authentication DB name                         | -       |
-| MONGORESTORE_OPTS                 | Options list of mongorestore. (ex --drop)      | -       |
-| AWSCLI_ENDPOINT_OPT               | Set a custom S3 endpoint if you use a S3 based service like DigitalOcean Spaces. (ex. AWSCLI_ENDPOINT_OPT="https://fra1.digitaloceanspaces.com") If not set the Amazon S3 standard endpoint will be used. | -        |
+| Variable                          | Description                                                                                                                                                                                               | Default |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| GCP_SERVICE_ACCOUNT_KEY_JSON_PATH | JSON file path to your GCP Service Account Key                                                                                                                                                            | -       |
+| GCP_ACCESS_KEY_ID                 | Your GCP Access Key                                                                                                                                                                                       | -       |
+| GCP_SECRET_ACCESS_KEY             | Your GCP Secret                                                                                                                                                                                           | -       |
+| GCP_PROJECT_ID                    | Your GCP Project ID                                                                                                                                                                                       | -       |
+| MONGODB_URI                       | Target MongoDB URI (ex. `mongodb://mongodb?replicaSet=rs0`). If set, the other `MONGODB_*` variables will be ignored.                                                                                     | -       |
+| MONGODB_HOST                      | Target MongoDB Host                                                                                                                                                                                       | "mongo" |
+| MONGODB_DBNAME                    | DB name to be restored from backup                                                                                                                                                                        | -       |
+| MONGODB_USERNAME                  | DB login username                                                                                                                                                                                         | -       |
+| MONGODB_PASSWORD                  | DB login password                                                                                                                                                                                         | -       |
+| MONGODB_AUTHDB                    | Authentication DB name                                                                                                                                                                                    | -       |
+| MONGORESTORE_OPTS                 | Options list of mongorestore. (ex --drop)                                                                                                                                                                 | -       |
+| AWSCLI_ENDPOINT_OPT               | Set a custom S3 endpoint if you use a S3 based service like DigitalOcean Spaces. (ex. AWSCLI_ENDPOINT_OPT="https://fra1.digitaloceanspaces.com") If not set the Amazon S3 standard endpoint will be used. | -       |
+| AWSCLIOPT                         | Other options you want to pass to `aws` command                                                                                                                                                           | -       |
+| GCSCLIOPT                         | Other options you want to pass to `gsutil` command                                                                                                                                                        | -       |
