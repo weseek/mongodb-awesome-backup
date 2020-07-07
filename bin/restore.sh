@@ -47,7 +47,10 @@ time ${TAR_CMD} ${TAR_OPTS} ${TARBALL_FULLPATH} -C ${DIRNAME} ${BASENAME}
 
 # restore database
 if [ "x${MONGODB_URI}" != "x" ]; then
-  MONGORESTORE_OPTS="--uri=${MONGODB_URI} ${MONGORESTORE_OPTS}"
+  MONGORESTORE_OPTS="--uri=${MONGODB_URI} -v ${TARGET} ${MONGORESTORE_OPTS}"
+  if [ "x${MONGODB_DBNAME}" != "x" ]; then
+    MONGORESTORE_OPTS="--nsInclude=${MONGODB_DBNAME}.* ${MONGORESTORE_OPTS}"
+  fi
 else
   if [ "x${MONGODB_DBNAME}" != "x" ]; then
     MONGORESTORE_OPTS="${MONGORESTORE_OPTS} -d ${MONGODB_DBNAME}"

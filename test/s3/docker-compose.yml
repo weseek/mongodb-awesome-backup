@@ -40,6 +40,29 @@ services:
       TARGET_BUCKET_URL: s3://app_mongodb_uri/
       MONGODB_URI: mongodb://mongo/
 
+  # test for restore using "MONGODB_URI" environment variable
+  app_restore_mongodb_uri:
+    <<: *app_default
+    environment:
+      <<: *base_env
+      TARGET_BUCKET_URL: s3://app_restore/
+      TARGET_FILE: dummy-backup-20180622000000.tar.bz2
+      MONGODB_URI: mongodb://mongo/
+    command:
+      - restore
+
+  # test for restore using "MONGODB_URI"/"MONGODB_DBNAME" environment variable
+  app_restore_mongodb_uri_mongodb_dbname:
+    <<: *app_default
+    environment:
+      <<: *base_env
+      TARGET_BUCKET_URL: s3://app_restore/
+      TARGET_FILE: dummy-backup-20180622000000.tar.bz2
+      MONGODB_URI: mongodb://mongo/dummy
+      MONGODB_DBNAME: dummy
+    command:
+      - restore
+
   # backup target (empty)
   mongo:
     image: mongo:3.4
