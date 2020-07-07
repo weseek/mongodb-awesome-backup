@@ -61,14 +61,6 @@ for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
   echo "Finished test for ${TEST_SERVICES[i]}: OK"
 }
 
-# Execute app_default
-docker-compose up --build app_default
-# Expect for app_default
-# Use wildcard since the time field of the filename is changed frequently.
-assert_file_exists_on_s3 "app_default/backup-${TODAY}*.tar.bz2"
-# Exit test for app_default
-echo 'Finished test for app_default: OK'
-
 # Expect for app_restore
 docker-compose up --build app_restore
 # Expect for app_restore
