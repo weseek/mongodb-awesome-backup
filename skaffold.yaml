@@ -1,3 +1,4 @@
+# "skaffold run" auto-builds docker image, when modifying Dockerfile
 apiVersion: skaffold/v1beta15
 kind: Config
 metadata:
