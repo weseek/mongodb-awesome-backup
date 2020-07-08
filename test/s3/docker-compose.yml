@@ -44,12 +44,15 @@ services:
       - restore
 
   # test for backup in command mode using "MONGODB_URI" environment variable
-  app_mongodb_uri: &app_mongodb_uri
+  app_mongodb_uri:
     <<: *app_default
     environment:
       <<: *base_env
       TARGET_BUCKET_URL: s3://app_mongodb_uri/
-      MONGODB_URI: mongodb://mongo/
+      # '&' check(expects the below output)
+      # app_mongodb_uri_1_1114ea3d45fa            | 2020-07-09T01:24:45.372+0900        WARNING: ignoring unsupported URI parameter 'maxpoolsize'
+      # app_mongodb_uri_1_1114ea3d45fa            | 2020-07-09T01:24:45.372+0900        WARNING: ignoring unsupported URI parameter 'minpoolsize'
+      MONGODB_URI: mongodb://mongo/?minPoolSize=0&maxPoolSize=10
 
   # test for restore using "MONGODB_URI" environment variable
   app_restore_mongodb_uri:
