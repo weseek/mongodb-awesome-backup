@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xe
 # End to end test script
 
 # handle exit and clean up containers
@@ -49,20 +49,33 @@ docker-compose up --build s3proxy mongo &
 sleep 3 # wait for the network of docker-compose to be ready
 docker-compose up --build init
 
-# Execute app_default
-docker-compose up --build app_default
-# Expect for app_default
-# Use wildcard since the time field of the filename is changed frequently.
-assert_file_exists_on_s3 "app_default/backup-${TODAY}*.tar.bz2"
-# Exit test for app_default
-echo 'Finished test for app_default: OK'
+# Test default commands with ServiceAccount/HMAC/OAuth authentications
+TEST_SERVICES=("app_default" "app_mongodb_uri")
+for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
+  # Execute
+  docker-compose up --build ${TEST_SERVICES[i]}
+  # Expect
+  # Use wildcard since the time field of the filename is changed frequently.
+  assert_file_exists_on_s3 "${TEST_SERVICES[i]}/backup-${TODAY}*.tar.bz2"
+  # Exit test
+  echo "Finished test for ${TEST_SERVICES[i]}: OK"
+}
 
-# Expect for app_restore
-docker-compose up --build app_restore
-# Expect for app_restore
-assert_dummy_record_exists_on_mongodb
-# Exit test for app_restore
-echo 'Finished test for app_restore: OK'
+TEST_SERVICES=(
+  "app_restore" "app_restore_mongodb_dbname" "app_restore_mongodb_uri"
+  "app_restore_mongodb_uri_mongodb_dbname"
+)
+for ((i = 0; i < ${#TEST_SERVICES[@]}; i++)) {
+  # Execute
+  docker-compose up --build ${TEST_SERVICES[i]}
+  # Expect
+  assert_dummy_record_exists_on_mongodb
+  # Exit test
+  echo "Finished test for ${TEST_SERVICES[i]}: OK"
+  # Clean up mongodb
+  docker-compose rm -vfs mongo
+  docker-compose up mongo &
+}
 
 # Expect for app_backup_cronmode
 docker-compose up --build app_backup_cronmode &

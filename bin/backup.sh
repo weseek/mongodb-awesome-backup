@@ -4,6 +4,7 @@
 BACKUPFILE_PREFIX=${BACKUPFILE_PREFIX:-backup}
 MONGODB_HOST=${MONGODB_HOST:-mongo}
 CRONMODE=${CRONMODE:-false}
+#MONGODB_URI=
 #MONGODB_HOST=
 #MONGODB_DBNAME=
 #MONGODB_USERNAME=
@@ -44,19 +45,23 @@ if [ "x${TARGET_BUCKET_URL}" == "x" ]; then
   exit 1
 fi
 
-
 # dump database
-if [ "x${MONGODB_DBNAME}" != "x" ]; then
-  MONGODUMP_OPTS="${MONGODUMP_OPTS} -d ${MONGODB_DBNAME}"
-fi
-if [ "x${MONGODB_USERNAME}" != "x" ]; then
-  MONGODUMP_OPTS="${MONGODUMP_OPTS} -u ${MONGODB_USERNAME} -p ${MONGODB_PASSWORD}"
-fi
-if [ "x${MONGODB_AUTHDB}" != "x" ]; then
-  MONGODUMP_OPTS="${MONGODUMP_OPTS} --authenticationDatabase ${MONGODB_AUTHDB}"
+if [ "x${MONGODB_URI}" != "x" ]; then
+  MONGODUMP_OPTS="--uri=${MONGODB_URI} ${MONGODUMP_OPTS}"
+else
+  if [ "x${MONGODB_DBNAME}" != "x" ]; then
+    MONGODUMP_OPTS="${MONGODUMP_OPTS} -d ${MONGODB_DBNAME}"
+  fi
+  if [ "x${MONGODB_USERNAME}" != "x" ]; then
+    MONGODUMP_OPTS="${MONGODUMP_OPTS} -u ${MONGODB_USERNAME} -p ${MONGODB_PASSWORD}"
+  fi
+  if [ "x${MONGODB_AUTHDB}" != "x" ]; then
+    MONGODUMP_OPTS="${MONGODUMP_OPTS} --authenticationDatabase ${MONGODB_AUTHDB}"
+  fi
+  MONGODUMP_OPTS="-h ${MONGODB_HOST} ${MONGODUMP_OPTS}"
 fi
 echo "dump MongoDB..."
-mongodump -h ${MONGODB_HOST} -o ${TARGET} ${MONGODUMP_OPTS}
+mongodump -o ${TARGET} ${MONGODUMP_OPTS}
 
 # run tar command
 echo "backup ${TARGET}..."

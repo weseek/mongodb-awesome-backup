@@ -1,0 +1,11 @@
+# "skaffold run" auto-builds docker image, when modifying Dockerfile
+apiVersion: skaffold/v1beta15
+kind: Config
+metadata:
+  name: mongodb-awesome-backup
+build:
+  artifacts:
+  - image: weseek/mongodb-awesome-backup
+  local:
+    push: false
+deploy: {}
