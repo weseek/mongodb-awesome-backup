@@ -16,6 +16,9 @@ if [ -n "${GCP_PROJECT_ID}" ] && [ -n "${GCP_SERVICE_ACCOUNT_KEY_JSON_PATH}" ]; 
 elif [ -n "${GCP_ACCESS_KEY_ID}" ] && [ -n "${GCP_SECRET_ACCESS_KEY}" ]; then
   echo '[DEBUG] Using HMAC authorization'
 
+  # Disable credential passing (ref. https://cloud.google.com/storage/docs/gsutil_install)
+  ${GCLOUDCLI} config set pass_credentials_to_gsutil false
+  
   # Using HMAC authorization
   cat <<- HERE > /root/.boto
 [Credentials]
