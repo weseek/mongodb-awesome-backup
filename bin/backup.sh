@@ -61,7 +61,7 @@ else
   MONGODUMP_OPTS="-h ${MONGODB_HOST} ${MONGODUMP_OPTS}"
 fi
 echo "dump MongoDB..."
-mongodump -o ${TARGET} ${MONGODUMP_OPTS}
+mongodump -o ${TARGET} ${MONGODUMP_OPTS} --forceTableScan
 
 # run tar command
 echo "backup ${TARGET}..."
