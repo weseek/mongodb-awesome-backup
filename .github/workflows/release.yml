@@ -17,7 +17,7 @@ jobs:
       - name: Get SemVer
         run: |
           SEMVER=`git tag | sed -E 's/^v//'`
-          echo ::set-env name=SEMVER::$SEMVER
+          echo "SEMVER=$SEMVER" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: crazy-max/ghaction-docker-buildx@v1.0.4
