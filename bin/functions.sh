@@ -40,7 +40,11 @@ gs_list_files() {
 # arguments: 1. s3 url (s3://.../...)
 s3_delete_file() {
 	if [ $# -ne 1 ]; then return 255; fi
-	${AWSCLI} ${AWSCLI_ENDPOINT_OPT} ${AWSCLIOPT} ${AWSCLI_DEL_OPT} $1
+	# split s3 url by bucket and object to use wildcard
+	# see. https://stackoverflow.com/a/38834779
+	BUCKET_URL=`dirname $1`
+	OBJECT_NAME=`basename $1`
+	${AWSCLI} ${AWSCLI_ENDPOINT_OPT} ${AWSCLIOPT} ${AWSCLI_DEL_OPT} ${BUCKET_URL} --recursive --exclude '*' --include ${OBJECT_NAME}
 }
 gs_delete_file() {
 	if [ $# -ne 1 ]; then return 255; fi
@@ -96,12 +100,8 @@ check_is_delete_backup_day() {
 s3_delete_file_if_delete_backup_day() {
 	if [ $# -ne 3 ]; then return 255; fi
 	if check_is_delete_backup_day $2 $3; then
-		if s3_exists $1; then
-			s3_delete_file $1
-			echo "DELETED past backuped file on S3: $1"
-		else
-			echo "not found past backuped file on S3: $1"
-		fi
+    s3_delete_file $1
+    echo "DELETED past backuped file on S3: $1"
 	fi
 }
 gs_delete_file_if_delete_backup_day() {
