@@ -25,7 +25,7 @@ jobs:
     
     - name: Set service account key path
       run: |
-        echo ::set-env name=GCP_SERVICE_ACCOUNT_KEY_JSON_PATH::"$(pwd)/tmp/key.json"
+        echo "GCP_SERVICE_ACCOUNT_KEY_JSON_PATH=$(pwd)/tmp/key.json" >> $GITHUB_ENV
 
     - name: Run integration tests
       run: |
