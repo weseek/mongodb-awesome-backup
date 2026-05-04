@@ -1,3 +1,8 @@
+> [!WARNING]
+> This repository has been moved to https://github.com/weseek/awesome-database-backup.
+> 
+> Please see “Migration from Previous Repositories”.
+
 ![Test](https://github.com/weseek/mongodb-awesome-backup/workflows/Test/badge.svg)
 
 What is mongodb-awesome-backup?
